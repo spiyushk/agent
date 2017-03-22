@@ -11,8 +11,8 @@ start() {
 echo $"***********  agent_controller service started ***********"
 
 command="/opt/infraguard/sbin/infraGuardMain"
-#daemon "nohup $command >/dev/null 2>&1 &"
-$command
+daemon "nohup $command >/dev/null 2>&1 &"
+#$command
 
 
 }

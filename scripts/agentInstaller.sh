@@ -94,14 +94,16 @@ downloadFiles_FromGitHub() {
     local url="wget -O /tmp/agent_controller.sh https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agent_controller.sh"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     
-    command="sudo mv /tmp/agent_controller.sh  /etc/init.d"
+    ######command="sudo mv /tmp/agent_controller.sh  /etc/init.d"
+    command="mv /tmp/agent_controller.sh  /etc/init.d"
     $command
     #chkconfig --add /etc/init.d/agent_controller.sh
 
     
 
 
-    command="sudo chmod 777 /etc/init.d/agent_controller.sh"
+    #####command="sudo chmod 777 /etc/init.d/agent_controller.sh"
+    command="chmod 777 /etc/init.d/agent_controller.sh"
     $command
     
 
@@ -110,10 +112,14 @@ downloadFiles_FromGitHub() {
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "infraGuardMain downloaded."
 
+    ###command="sudo chmod 777 /opt/infraguard/sbin/infraGuardMain"
+    command="chmod 777 /opt/infraguard/sbin/infraGuardMain"
+    $command
+    
+
     export start="start"
     export command="/etc/init.d/agent_controller.sh"
-    
-    
+        
     sh $command ${start}
     
 
@@ -121,7 +127,21 @@ downloadFiles_FromGitHub() {
    
     }
 
+    checkUserPrivileges(){
+        if [ `id -u` -ne 0 ] ; then
+            echo "error: requested operation requires superuser privilege"
+            exit 1
+        fi
+    }
 
+
+
+echo "$#"
+if [ $# -ne 3 ] ; then
+    echo "Insufficient arguments. Usage: $0 serverName projectId licenseKey"
+    exit 1
+fi
+checkUserPrivileges
 # Read arguments, it will saved into /tmp/serverInfo.txt & then serverMgmt/ServerHandler.go will read.
 serverName=$1
 projectId=$2
@@ -134,7 +154,7 @@ echo "os found = : $os"
 create_InfraGuardDirectories
 downloadFiles_FromGitHub
 
-#echo "Found OS = : $os"
+
 
 
 
