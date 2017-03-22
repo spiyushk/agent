@@ -9,11 +9,8 @@
 
 start() {
 echo $"***********  agent_controller service started ***********"
-echo "Going to install Agent Code"
+
 command="/opt/infraguard/sbin/infraGuardMain"
-
-
-echo "Going to execute infraGuardMain executable."
 daemon "nohup $command >/dev/null 2>&1 &"
 
 
