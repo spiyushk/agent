@@ -1,7 +1,7 @@
 #!/bin/bash
 #kconfig: 35 90 12
 # description: Agent Installer Test
-#
+########################################################  . /etc/init.d/functions
 
 # Get function from functions library
 
@@ -11,7 +11,8 @@ start() {
 echo $"***********  agent_controller service started ***********"
 
 command="/opt/infraguard/sbin/infraGuardMain"
-daemon "nohup $command >/dev/null 2>&1 &"
+#daemon "nohup $command >/dev/null 2>&1 &"
+$command
 
 
 }
@@ -19,7 +20,7 @@ daemon "nohup $command >/dev/null 2>&1 &"
 
 stop(){
 echo "Going to kill process agent_controller"
-pkill  agent_controller
+pkill  agent_controller.sh
 
 }
 
@@ -33,7 +34,7 @@ case "$1" in
         ;;
 
 status)
-        status agent_controller
+        status agent_controller.sh
         ;;
 
  *)
