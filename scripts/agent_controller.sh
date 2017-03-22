@@ -1,3 +1,4 @@
+#!/bin/bash
 #kconfig: 35 90 12
 # description: Agent Installer Test
 #
