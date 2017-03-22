@@ -84,31 +84,16 @@ install_daemon(){
 
 downloadFiles_FromGitHub() {
     
-   # echo "Server Name: $serverName"
-   #   echo "Project Id: $pId"
-   #   echo "$serverName:$pId" >> /tmp/serverInfo.txt
-
-
-   #   echo "Downloading infraGuardMain executable. Please wait...."
-   #  #####wget "wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/piyush2104/infraguard/master/go_projects/src/agentController/infraGuardMain"
-   #  local url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/piyush2104/infraguard/master/go_projects/bin/infraGuardMain"
-   #  wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
-   #  echo "infraGuardMain downloaded."
-
-
     echo "Server Name: $serverName"
     echo "Project Id: $pId"
     echo "$serverName:$pId" >> /tmp/serverInfo.txt
 
-
-     echo "Downloading infraGuardMain executable. Please wait...."
-    #####wget "wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/piyush2104/infraguard/master/go_projects/src/agentController/infraGuardMain"
-    local url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/piyush2104/infraguard/master/go_projects/bin/infraGuardMain"
+    echo "Downloading infraGuardMain executable. Please wait...."
+    local url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/bin/infraGuardMain"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "infraGuardMain downloaded."
 
-
-
+# bash <(wget -qO- https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agentInstaller.sh) server1 101
 
 
 
@@ -123,7 +108,8 @@ pId=$2
 
 os=""
 get_osflavor
-#create_InfraGuardDirectories
+echo "os = : $os"
+create_InfraGuardDirectories
 downloadFiles_FromGitHub
 #install_daemon
 #echo "Found OS = : $os"
