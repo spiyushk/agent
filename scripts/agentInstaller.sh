@@ -90,7 +90,7 @@ downloadFiles_FromGitHub() {
     echo "$serverName:$projectId:licenseKey" >> /tmp/serverInfo.txt
 
     echo "Downloading infraGuardMain executable. Please wait...."
-    local url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/bin/infraGuardMain"
+    local url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/bin/linuxAmd64/infraGuardMain"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "infraGuardMain downloaded."
 
