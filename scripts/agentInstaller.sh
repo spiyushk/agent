@@ -83,10 +83,8 @@ install_daemon(){
 }
 
 downloadFiles_FromGitHub() {
-    # dpkg: error: requested operation requires superuser privilege
-     echo "Server Name: $serverName"
-     echo "Project Id: $projectId"
-     echo "licenseKey: $licenseKey"
+    
+     echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
      echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
 
     echo "Downloading agent_controller.sh and moving it from /tmp to /etc/init.d ..."
@@ -135,8 +133,6 @@ downloadFiles_FromGitHub() {
     }
 
 
-
-echo "$#"
 if [ $# -ne 3 ] ; then
     echo "Insufficient arguments. Usage: $0 serverName projectId licenseKey"
     exit 1
