@@ -1,7 +1,10 @@
 #!/bin/bash
 #kconfig: 35 90 12
 # description: Agent Installer Test
-########################################################  . /etc/init.d/functions
+
+if [[ -f "/etc/redhat-release" ]]
+    then
+    . /etc/init.d/functions
 
 
 # Start the service AgentInstaller
