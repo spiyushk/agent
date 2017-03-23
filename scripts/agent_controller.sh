@@ -37,7 +37,6 @@ pkill  agent_controller.sh
 ### main logic ###
 case "$1" in
   start)
-        addLib
         start
         ;;
   stop)

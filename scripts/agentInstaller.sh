@@ -122,10 +122,10 @@ downloadFiles_FromGitHub() {
     
 
      if [[ "$os" = "debian"  || "$os" = "ubuntu" ]] ;then
-            echo " ------- Since os is $os, going to call  update-rc.d for agent_controller.sh --------"
+            echo " ------- going to call  update-rc.d for agent_controller.sh --------"
             update-rc.d agent_controller.sh defaults
      else
-            echo " ------- Since os is $os, going to call  chkconfig for agent_controller.sh --------"
+            echo " ------- going to call  chkconfig for agent_controller.sh --------"
             chkconfig --add /etc/init.d/agent_controller.sh       
      fi
 
