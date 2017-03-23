@@ -117,6 +117,14 @@ downloadFiles_FromGitHub() {
 
     export start="start"
     export command="/etc/init.d/agent_controller.sh"
+    # 
+
+     if [[ "$os" = "debian"  || "$os" = "ubuntu" ]] ;then
+            echo "Since os is $os, going to execute update-rc.d"
+            update-rc.d agent_controller.sh defaults
+     else
+            chkconfig --add /etc/init.d/agent_controller.sh       
+     fi
         
     sh $command ${start}
     
