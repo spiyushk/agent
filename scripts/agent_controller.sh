@@ -8,7 +8,8 @@
 # Start the service AgentInstaller
 
 start() {
-echo $"***********  agent_controller service started ***********"
+echo ""
+echo $"***********  agent_controller service started. Triggered from /etc/init.d/agent_controller.sh ***********"
 
 command="/opt/infraguard/sbin/infraGuardMain"
 #daemon "nohup $command >/dev/null 2>&1 &"

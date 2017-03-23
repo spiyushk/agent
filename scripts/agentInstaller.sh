@@ -42,23 +42,28 @@ COMMENT
 
 create_InfraGuardDirectories(){
     echo "Creating directories in /opt ..."
-    exec="sudo mkdir -p /opt/infraguard/sbin"
+    exec="mkdir -p /opt/infraguard/sbin"
     $exec
 
-    exec="sudo mkdir -p /opt/infraguard/etc"
+    exec="mkdir -p /opt/infraguard/etc"
     $exec
 
-    exec="sudo mkdir -p /var/logs/infraguard"
-    $exec
-    
-
-    exec="sudo chmod 777 /opt/infraguard/sbin"
+    exec="mkdir -p /var/logs/infraguard"
     $exec
 
-    exec="sudo chmod 777 /opt/infraguard/etc"
+    exec="touch  /var/logs/infraguard/activityLog"
     $exec
 
-    exec="sudo chmod 777 /var/logs/infraguard"
+    exec="chmod 777 /var/logs/infraguard/activityLog"
+    $exec
+
+    exec="chmod 777 /opt/infraguard/sbin"
+    $exec
+
+    exec="chmod 777 /opt/infraguard/etc"
+    $exec
+
+    exec="chmod 777 /var/logs/infraguard"
     $exec
     
     echo "completed Directories Creation"
@@ -87,7 +92,7 @@ downloadFiles_FromGitHub() {
      echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
      echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
 
-    echo "Downloading agent_controller.sh and moving it from /tmp to /etc/init.d ..."
+    echo "Downloading agent_controller.sh  > This file will act as a process"
     echo ""
     local url="wget -O /tmp/agent_controller.sh https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agent_controller.sh"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
@@ -95,36 +100,33 @@ downloadFiles_FromGitHub() {
     ######command="sudo mv /tmp/agent_controller.sh  /etc/init.d"
     command="mv /tmp/agent_controller.sh  /etc/init.d"
     $command
-    #chkconfig --add /etc/init.d/agent_controller.sh
-
-    
-
-
-    #####command="sudo chmod 777 /etc/init.d/agent_controller.sh"
+      
+   
     command="chmod 777 /etc/init.d/agent_controller.sh"
     $command
     
 
-    echo "Downloading infraGuardMain executable. Please wait...."
+    echo "Downloading infraGuardMain executable. It will take time. Please wait...."
     url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/agentController/infraGuardMain"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "infraGuardMain downloaded."
 
-    ###command="sudo chmod 777 /opt/infraguard/sbin/infraGuardMain"
+   
     command="chmod 777 /opt/infraguard/sbin/infraGuardMain"
     $command
     
 
-    export start="start"
-    export command="/etc/init.d/agent_controller.sh"
-    # 
-
      if [[ "$os" = "debian"  || "$os" = "ubuntu" ]] ;then
-            echo "Since os is $os, going to execute update-rc.d"
+            echo " ------- Since os is $os, going to call  update-rc.d for agent_controller.sh --------"
             update-rc.d agent_controller.sh defaults
      else
+            echo " ------- Since os is $os, going to call  chkconfig for agent_controller.sh --------"
             chkconfig --add /etc/init.d/agent_controller.sh       
      fi
+
+     
+    export start="start"
+    export command="/etc/init.d/agent_controller.sh"
         
     sh $command ${start}
     
@@ -139,7 +141,6 @@ downloadFiles_FromGitHub() {
             exit 1
         fi
     }
-
 
 if [ $# -ne 3 ] ; then
     echo "Insufficient arguments. Usage: $0 serverName projectId licenseKey"
