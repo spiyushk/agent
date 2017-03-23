@@ -3,10 +3,10 @@
 
 get_osflavor(){
 
-    
     if [[ -f "/etc/lsb-release" ]]
         then
             os="ubuntu"
+            fileAgentController="agent_controller_ubuntu.sh"
         elif [[ -f "/etc/redhat-release" ]]
         then
             os="rpm"
@@ -18,6 +18,9 @@ get_osflavor(){
             os="unknown"
             #exit 1
     fi
+  
+
+
 }
 
 <<"COMMENT"
@@ -93,16 +96,20 @@ install_daemon(){
 
 downloadFiles_FromGitHub() {
     
-    echo "Downloading agent_controller.sh  > This file will act as a process"
-    local url="wget -O /tmp/agent_controller.sh https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agent_controller.sh"
+    echo "Downloading $fileAgentController  > This file will act as a process"
+    
+    #local url="wget -O /tmp/agent_controller.sh https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agent_controller.sh"
+    local url="wget -O /tmp/$fileAgentController https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/$fileAgentController"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     
     ######command="sudo mv /tmp/agent_controller.sh  /etc/init.d"
-    command="mv /tmp/agent_controller.sh  /etc/init.d"
+    #command="mv /tmp/agent_controller.sh  /etc/init.d"
+    command="mv /tmp/$fileAgentController  /etc/init.d"
     $command
       
    
-    command="chmod 777 /etc/init.d/agent_controller.sh"
+    #command="chmod 777 /etc/init.d/agent_controller.sh"
+    command="chmod 777 /etc/init.d/$fileAgentController"
     $command
     
     echo ""
@@ -123,15 +130,18 @@ downloadFiles_FromGitHub() {
 
      if [[ "$os" = "debian"  || "$os" = "ubuntu" ]] ;then
             echo " ------- going to call  update-rc.d for agent_controller.sh --------"
-            update-rc.d agent_controller.sh defaults
+            #update-rc.d agent_controller.sh defaults
+            update-rc.d $fileAgentController defaults
      else
             echo " ------- going to call  chkconfig for agent_controller.sh --------"
-            chkconfig --add /etc/init.d/agent_controller.sh       
+            #chkconfig --add /etc/init.d/agent_controller.sh       
+            chkconfig --add /etc/init.d/$fileAgentController
      fi
 
 
     export start="start"
-    export command="/etc/init.d/agent_controller.sh"
+    #export command="/etc/init.d/agent_controller.sh"
+    export command="/etc/init.d/$fileAgentController"
         
     sh $command ${start}
     
@@ -162,6 +172,7 @@ projectId=$2
 licenseKey=$3
 
 os=""
+fileAgentController="agent_controller.sh"
 get_osflavor
 #install_daemon
 echo "os found = : $os"
