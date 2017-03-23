@@ -14,9 +14,9 @@ get_osflavor(){
         then
             os="debian"
         else
-            echo "ERROR: Cannot get the system type. Aborting entire process."
+            #echo "ERROR: Cannot get the system type. Aborting entire process."
             os="unknown"
-            exit 1
+            #exit 1
     fi
 }
 
