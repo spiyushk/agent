@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-
+. /etc/init.d/functions
 
 # chkconfig: 35 90 12
 # description: Agent Installer Test
@@ -23,19 +23,8 @@
             os="debian"
         else
             os="unknown"
-          
             
     fi
-
-    
-    if [[ "$os" != "ubuntu"]]
-        then
-        . /etc/init.d/functions
-    fi
-
-  
-
-
 }         
 
 
