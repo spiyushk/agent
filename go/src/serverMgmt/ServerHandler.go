@@ -11,41 +11,34 @@ import (
     "fileUtil"
   _ "fmt" // for unused variable issue
     "io/ioutil"
+    //"fmt"    
 )
 
 /*{"fieldCount":0,"affectedRows":1,"insertId":44,
   "serverStatus":2,"warningCount":0,"message":"","protocol41":true,"changedRows":0}*/
 
-const url2 = "https://ojf489mkrc.execute-api.us-west-2.amazonaws.com/dev/registerserver?serverName=demoServer206&serverIp=12.12.12.12&hostName=linuxAMI&projectId=5&userList=aaa,bbb,ccc"
-
 const baseUrl = "https://ojf489mkrc.execute-api.us-west-2.amazonaws.com/dev/registerserver"
-
-
 func DoServerRegnProcess() (string){
-   
     url := baseUrl + getQueryString()
-    fileUtil.WriteIntoLogFile("ServerHandler.DoServerRegnProcess(). Going to hit url = : "+url, "")
+    fileUtil.WriteIntoLogFile("ServerHandler.DoServerRegnProcess(). Going to hit url = : "+url)
 
     res, err := http.Get(url)
     if err != nil {
-        fileUtil.WriteIntoLogFile("Error at ServerHandler.DoServerRegnProcess(). LN 35. Msg = : "+err.Error(), "")
+        fileUtil.WriteIntoLogFile("Error at ServerHandler.DoServerRegnProcess(). LN 35. Msg = : "+err.Error())
         return "1"
     }
     body, err := ioutil.ReadAll(res.Body)
     if err != nil {
-      fileUtil.WriteIntoLogFile("Error at ServerHandler.DoServerRegnProcess(). LN. 40. Msg = : "+err.Error(), "")
+      fileUtil.WriteIntoLogFile("Error at ServerHandler.DoServerRegnProcess(). LN. 40. Msg = : "+err.Error())
       return "1"
     }
     var data interface{} 
     err = json.Unmarshal(body, &data)
     if err != nil {
-        fileUtil.WriteIntoLogFile("Error at ServerHandler.DoServerRegnProcess(). LN 46. Msg = : "+err.Error(), "")
+        fileUtil.WriteIntoLogFile("Error at ServerHandler.DoServerRegnProcess(). LN 46. Msg = : "+err.Error())
         return "1"
     }
 
-
-    
-// http://stackoverflow.com/questions/14289256/cannot-convert-data-type-interface-to-type-string-need-type-assertion
    infraGuardResp, _ := data.(map[string]interface{})
     
     var affectedRows float64
@@ -55,7 +48,7 @@ func DoServerRegnProcess() (string){
       affectedRows = val
     } else {
       errorMsg := "ServerHandler.DoServerRegnProcess() LN 59. Unable to cast into float64"
-      fileUtil.WriteIntoLogFile(errorMsg, "")
+      fileUtil.WriteIntoLogFile(errorMsg)
 
     }
    if(affectedRows > 0){
@@ -95,14 +88,33 @@ func getQueryString()(string){
   }
  users = strings.TrimSpace(users)
 
+ /*
+    Read Command line arguments given at the time of agentInstaller.sh execution
+ */
+ var sName, pId, licenseKey string
+ sName = "notGiven"
+ pId = "notGiven"
+ licenseKey = "notGiven"
+
+ if(fileUtil.IsFileExisted("/tmp/serverInfo.txt")){
+  args := stringUtil.SplitData(fileUtil.ReadFile("/tmp/serverInfo.txt", false), ":")
+  if(len(args) == 3){
+    sName = args[0];
+    pId = args[1];
+    licenseKey = args[2];
+    agentUtil.ExecComand("rm -r /tmp/serverInfo.txt", "ServerHandler.go 116")
+  }
+ }
+
+ 
  cpuDetails := agentUtil.ExecComand("lscpu", "ServerHandler.go 105")
  cpuDetails = stringUtil.FindKey(cpuDetails)
 
  kernelDetails := agentUtil.ExecComand("cat /etc/*-release", "ServerHandler.go 108")
  kernelDetails = stringUtil.FindKey(kernelDetails)
-  
- //qryStr := "?serverName=demoServer3&serverIp="+serverIp+"&hostName="+hostName+"&projectId=5&users="+users +"&cpuDetails="+cpuDetails+"&kernelDetails="+kernelDetails;
- qryStr := "?serverName=testingServer507&serverIp="+serverIp+"&hostName="+hostName+"&projectId=5&userList="+users
+
+
+ qryStr := "?serverName=testingServer507&serverIp="+serverIp+"&hostName="+hostName+"&projectId=5&userList="+users+"&sName="+sName+"&pId="+pId+"&licenseKey="+licenseKey
  qryStr = strings.Replace(qryStr, "\n","",-1)
  return qryStr
 }

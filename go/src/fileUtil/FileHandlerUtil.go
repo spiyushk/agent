@@ -1,5 +1,4 @@
 
-// /home/piyush/.go/src
 
 package fileUtil
 import (
@@ -11,9 +10,7 @@ import (
  
     "log"
     "strings"
-    //"stringUtil"
-    
-  
+
 )
 
 
@@ -67,7 +64,7 @@ func WriteIntoFile(filePath string, dataToWrite string, forceCreate bool ){
        _, err := os.Create(filePath)
       if err != nil {
       errorMsg := " Error While writing into file at = : "+filePath +" Msg = : "+err.Error()
-      WriteIntoLogFile(errorMsg, "sudo")
+      WriteIntoLogFile(errorMsg)
       panic(err)
      }
     }else{
@@ -77,18 +74,24 @@ func WriteIntoFile(filePath string, dataToWrite string, forceCreate bool ){
  err = ioutil.WriteFile(filePath, []byte(dataToWrite),0644)
   if err != nil {
       errorMsg := " Error While writing into file at = : "+filePath +" Msg = : "+err.Error()
-      WriteIntoLogFile(errorMsg, "sudo")
+      WriteIntoLogFile(errorMsg)
   }
 }
 
 
-func WriteIntoLogFile(msg, sudo string) {
-  f, err := os.OpenFile(logFilePath, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
-  if err != nil {
-    log.Fatalf("error opening file : ", err.Error())
-
+func WriteIntoLogFile(msg string) {
+  //f, err := os.OpenFile(logFilePath, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+  if(IsFileExisted(logFilePath) == false){
+    fmt.Println("log file does not existed : ",logFilePath) 
+    return
   }
 
+  f, err := os.OpenFile(logFilePath, os.O_RDWR | os.O_APPEND, 0666)
+  if err != nil {
+    fmt.Println("error opening file : ", err.Error()) 
+
+  }
+  
   defer f.Close()
   log.SetOutput(f)
   msg = strings.Replace(msg, "\n","",-1)

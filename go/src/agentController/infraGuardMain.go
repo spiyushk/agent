@@ -27,10 +27,10 @@ func main() {
   respStr :=serverMgmt.DoServerRegnProcess()
   if(respStr =="0"){
     fmt.Printf("\nServer Regn process executed successfully\n")
-    fileUtil.WriteIntoLogFile("InfraGuard.main(). Server Regn process executed successfully", "")
+    fileUtil.WriteIntoLogFile("InfraGuard.main(). Server Regn process executed successfully")
 
   }else{
-    fileUtil.WriteIntoLogFile("InfraGuard.main(). Abort server regn Process. Chk log at /var/logs/infraguard/activityLog", "")
+    fileUtil.WriteIntoLogFile(" >>>>>>>>>> InfraGuard.main(). Abort server regn Process. >>>>> ")
     fmt.Printf("Abort server regn Process. Chk log at /var/logs/infraguard/activityLog")
   }
   

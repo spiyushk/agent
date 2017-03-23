@@ -8,9 +8,16 @@ import (
 )
 
 
+func SplitData(data, delim string)([]string){
+  data = RemoveSpace(data)
+  if(len(data) > 0 ){
+    return strings.Split(data, delim)
+  }else{
+    return nil
+  }
+}
 
 func RemoveSpace(words string)(string){
-
   words = strings.TrimSpace(words)
   list := strings.Split(words," ")
   if(len(list) == 0){
