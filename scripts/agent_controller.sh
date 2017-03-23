@@ -12,23 +12,27 @@
 # Start the service AgentInstaller
 
  get_osflavor(){
-
     if [[ -f "/etc/lsb-release" ]]
         then
             os="ubuntu"
         elif [[ -f "/etc/redhat-release" ]]
         then
             os="rpm"
-            . /etc/init.d/functions
         elif [[ -f "/etc/debian_version" ]]
         then
             os="debian"
         else
-            #echo "ERROR: Cannot get the system type. Aborting entire process."
             os="unknown"
-            . /etc/init.d/functions
-            #exit 1
+          
+            
     fi
+
+    
+    if [[ "$os" != "ubuntu"]]
+        then
+        . /etc/init.d/functions
+    fi
+
   
 
 
