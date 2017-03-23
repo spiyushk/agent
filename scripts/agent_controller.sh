@@ -7,6 +7,13 @@
 
 # Start the service AgentInstaller
 
+if [[ -f "/etc/redhat-release" ]]
+        then
+            . /etc/init.d/functions
+fi            
+
+
+
 start() {
 echo ""
 echo $"***********  agent_controller service started. Triggered from /etc/init.d/agent_controller.sh ***********"
@@ -44,6 +51,4 @@ status)
 esac
 
 exit 0
-
-
 
