@@ -8,24 +8,7 @@
 
           
 # Get function from functions library
-get_osflavor(){
-    if [[ -f "/etc/lsb-release" ]]
-        then
-            os="ubuntu"
-        elif [[ -f "/etc/redhat-release" ]]
-        then
-            os="rpm"
-            . /etc/init.d/functions
-        elif [[ -f "/etc/debian_version" ]]
-        then
-            os="debian"
-        else
-            echo "ERROR: Cannot get the system type. Aborting entire process."
-            os="unknown"
-            exit 1
-    fi
-}
-
+. /etc/init.d/functions
 
 start() {
 
@@ -49,7 +32,6 @@ pkill  agent_controller.sh
 ### main logic ###
 case "$1" in
   start)
-        get_osflavor
         start
         ;;
   stop)
