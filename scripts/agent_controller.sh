@@ -3,14 +3,22 @@
 # description: Agent Installer Test
 ########################################################  . /etc/init.d/functions
 
-# Get function from functions library
 
 # Start the service AgentInstaller
 
-if [[ -f "/etc/redhat-release" ]]
+          
+# Get function from functions library
+if [[ -f "/etc/lsb-release" ]]
         then
-            . /etc/init.d/functions
-fi            
+            os="ubuntu" # Will append some more code  
+        elif [[ -f "/etc/redhat-release" ]]
+        then
+             . /etc/init.d/functions
+        elif [[ -f "/etc/debian_version" ]]
+        then
+            os="debian" # Will append some more code  
+        
+fi
 
 
 
