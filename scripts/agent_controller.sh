@@ -8,7 +8,7 @@
 
           
 # Get function from functions library
-. /etc/init.d/functions
+######################## . /etc/init.d/functions
 
 start() {
 
