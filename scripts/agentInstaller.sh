@@ -89,9 +89,6 @@ install_daemon(){
 
 downloadFiles_FromGitHub() {
     
-    echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
-    echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
-
     echo "Downloading agent_controller.sh  > This file will act as a process"
     local url="wget -O /tmp/agent_controller.sh https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agent_controller.sh"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
@@ -113,6 +110,11 @@ downloadFiles_FromGitHub() {
    
     command="chmod 777 /opt/infraguard/sbin/infraGuardMain"
     $command
+
+
+    echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
+    echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
+    
     
 
      if [[ "$os" = "debian"  || "$os" = "ubuntu" ]] ;then
