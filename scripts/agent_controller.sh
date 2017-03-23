@@ -9,8 +9,10 @@
           
 # Get function from functions library
 addFunctions(){
-    if [[ -f "/etc/redhat-release" ]]then
-        . /etc/init.d/functions
+    if [[ -f "/etc/redhat-release" ]] 
+        then
+            . /etc/init.d/functions
+
     fi
 }
 
