@@ -3,12 +3,21 @@
 # description: Agent Installer Test
 
 addLib(){
-    if [[ -f "/etc/redhat-release" ]]
+   
+    if [[ -f "/etc/lsb-release" ]]
         then
-        . /etc/init.d/functions
+            os="ubuntu"
+        elif [[ -f "/etc/redhat-release" ]]
+        then
+            os="rpm"
+            . /etc/init.d/functions
+        elif [[ -f "/etc/debian_version" ]]
+        then
+            os="debian"
+        
     fi
-
 }
+
 
 
 # Start the service AgentInstaller
@@ -56,3 +65,4 @@ status)
 esac
 
 exit 0
+os=""
