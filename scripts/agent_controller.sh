@@ -4,8 +4,9 @@
 
 addLib(){
     if [[ -f "/etc/redhat-release" ]]
-    then
-    . /etc/init.d/functions
+        then
+        . /etc/init.d/functions
+    fi
 
 }
 
@@ -55,4 +56,3 @@ status)
 esac
 
 exit 0
-
