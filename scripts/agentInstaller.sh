@@ -1,5 +1,9 @@
 #!/bin/bash
+
+
 get_osflavor(){
+
+    
     if [[ -f "/etc/lsb-release" ]]
         then
             os="ubuntu"
@@ -114,7 +118,7 @@ downloadFiles_FromGitHub() {
 
     echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
     echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
-    
+
     
 
      if [[ "$os" = "debian"  || "$os" = "ubuntu" ]] ;then
@@ -147,6 +151,10 @@ if [ $# -ne 3 ] ; then
     echo "Insufficient arguments. Usage: $0 serverName projectId licenseKey"
     exit 1
 fi
+
+
+
+
 checkUserPrivileges
 # Read arguments, it will saved into /tmp/serverInfo.txt & then serverMgmt/ServerHandler.go will read.
 serverName=$1
