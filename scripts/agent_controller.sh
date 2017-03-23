@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-. /etc/init.d/functions
+
 
 # chkconfig: 35 90 12
 # description: Agent Installer Test
@@ -11,7 +11,28 @@
 
 # Start the service AgentInstaller
 
-          
+ get_osflavor(){
+
+    if [[ -f "/etc/lsb-release" ]]
+        then
+            os="ubuntu"
+        elif [[ -f "/etc/redhat-release" ]]
+        then
+            os="rpm"
+            . /etc/init.d/functions
+        elif [[ -f "/etc/debian_version" ]]
+        then
+            os="debian"
+        else
+            #echo "ERROR: Cannot get the system type. Aborting entire process."
+            os="unknown"
+            . /etc/init.d/functions
+            #exit 1
+    fi
+  
+
+
+}         
 
 
 
@@ -37,6 +58,7 @@ pkill  agent_controller.sh
 ### main logic ###
 case "$1" in
   start)
+        get_osflavor
         start
         ;;
   stop)
