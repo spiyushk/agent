@@ -8,21 +8,14 @@
 
           
 # Get function from functions library
-if [[ -f "/etc/lsb-release" ]]
-        then
-            os="ubuntu" # Will append some more code  
-        elif [[ -f "/etc/redhat-release" ]]
-        then
-             . /etc/init.d/functions
-        elif [[ -f "/etc/debian_version" ]]
-        then
-            os="debian" # Will append some more code  
-        
-fi
-
-
+addFunctions(){
+    if [[ -f "/etc/redhat-release" ]]then
+        . /etc/init.d/functions
+    fi
+}
 
 start() {
+
 echo ""
 echo $"***********  agent_controller service started. Triggered from /etc/init.d/agent_controller.sh ***********"
 
@@ -43,6 +36,7 @@ pkill  agent_controller.sh
 ### main logic ###
 case "$1" in
   start)
+        addFunctions
         start
         ;;
   stop)
