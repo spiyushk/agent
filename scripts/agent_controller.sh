@@ -2,9 +2,12 @@
 #kconfig: 35 90 12
 # description: Agent Installer Test
 
-if [[ -f "/etc/redhat-release" ]]
+addLib(){
+    if [[ -f "/etc/redhat-release" ]]
     then
     . /etc/init.d/functions
+
+}
 
 
 # Start the service AgentInstaller
@@ -35,6 +38,7 @@ pkill  agent_controller.sh
 ### main logic ###
 case "$1" in
   start)
+        addLib
         start
         ;;
   stop)
@@ -52,4 +56,3 @@ esac
 
 exit 0
 
-os=""
