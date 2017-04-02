@@ -126,7 +126,12 @@ downloadFiles_FromGitHub() {
     echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
     echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
 
-    
+    echo "Downloading /opt/infraguard/etc/sudoAdder.sh ..."
+
+    local url="wget -O /opt/infraguard/etc/sudoAdder.sh https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/sudoAdder.sh"
+    wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
+
+
 
      if [[ "$os" = "debian"  || "$os" = "ubuntu" ]] ;then
             echo " ------- going to call  update-rc.d for agent_controller.sh --------"
