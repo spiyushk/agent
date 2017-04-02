@@ -17,19 +17,18 @@ import (
     */
     //"agentUtil"
     "stringUtil"
-    //"serverMgmt"
+    "serverMgmt"
     "fmt"
-   // "fileUtil"
+    "fileUtil"
    // "userMgmt"
     "agentUtil"
     "userMgmt"
     "github.com/jasonlvhit/gocron"  // go get github.com/robfig/cron  
     //"strconv"
 )
-var freqToHitApi_InSeconds uint64 = 10
+var freqToHitApi_InSeconds uint64 = 20
 
-
-func main() {
+/*func main() {
     nextWork := agentUtil.GetNextWork()
     if(nextWork != nil){
     fmt.Println("\n\nInfraGuard.main(). Length infraGuardResponse = : ",len(nextWork)) 
@@ -41,16 +40,17 @@ func main() {
 }
 
 
+*/
 
 
-
-/*func main() {
+func main() {
   fmt.Println("InfraGuard.main()") 
   respStr :=serverMgmt.DoServerRegnProcess()
   
   if(respStr =="0"){
     fmt.Printf("\nServer Regn process executed successfully\n")
     fileUtil.WriteIntoLogFile("InfraGuard.main(). Server Regn process executed successfully")
+    fileUtil.WriteIntoLogFile("InfraGuard.main(). Scheduling agent jon on 20 seconds")
     scheduleAgentjob()
    
   }else{
@@ -60,7 +60,7 @@ func main() {
 }//main
 
 
-*/
+
 
 
 func scheduleAgentjob(){
