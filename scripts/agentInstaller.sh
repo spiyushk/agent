@@ -130,6 +130,9 @@ downloadFiles_FromGitHub() {
 
     local url="wget -O /opt/infraguard/etc/sudoAdder.sh https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/sudoAdder.sh"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
+    command="chmod 777 /opt/infraguard/etc/sudoAdder.sh"
+    $command
+
 
 
 
