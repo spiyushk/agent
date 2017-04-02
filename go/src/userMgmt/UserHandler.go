@@ -1,56 +1,45 @@
 
 
-package main
+package userMgmt
 
 import (
     
     "fmt"
-    "io/ioutil"
-    "os"
+    //"io/ioutil"
+    // "encoding/json"
+     //"net/http"
+     "fileUtil"
+     "agentUtil"
+     //"os/exec" ---------------------------------
+     //"stringUtil"
+
+   // "os"
     "os/exec"
     _ "fmt" // for unused variable issue
-    "net/smtp"
-    "log"
-    "strings"
-    "encoding/json"
-    "net/http"
+  //  "net/smtp"
+   // "log"
+   // "strings" n
+    
+     //"reflect"
+    // "strconv"
 )
 
-type ApiResponse struct {
-  activityName        string
-  userName            string
-  preferredShell      string
-  comment             string
-  usrEmail            string
-  passphrase          string
-  usrPrivilege        string
-}
-
-
-
-
-
-func addUser(usrLoginName, comment, preferredShell, sudo, usrPrivilege, passphrase string) string {
-
-    args := "In addUser(). args = : "+usrLoginName +" : "+comment +" : "+preferredShell
-    //fmt.Println("Executing addUser method with following args. ", args)
-    entryIntoLog(args, "sudo")
-    
-
+func AddUser(usrLoginName, preferredShell, pubKey string) string {
+   
     removed_dir := "/home/deleted:" + usrLoginName
     home_dir := "/home/" + usrLoginName
       
      //Check whether user already existed or not. 
-     status := execComand("id "+usrLoginName, "52.");
-    
+     status := agentUtil.ExecComand("id "+usrLoginName, "UserHandler.AddUser() L28");
+     fmt.Println("33. UserHandler.AddUser()  status = : ", status)
 
      /* status ='fail' specify error,  'id usrLoginName' returns error due to absence of user existence
         So, below code block process to create new User Account
      */
     if(status == "fail") {
-        if(isFileExisted(home_dir) == false){
-          if(isFileExisted(removed_dir) == true){
-            execComand("/bin/mv "+ removed_dir +" "+home_dir, "61")
+        if(fileUtil.IsFileExisted(home_dir) == false){
+          if(fileUtil.IsFileExisted(removed_dir) == true){
+            agentUtil.ExecComand("/bin/mv "+ removed_dir +" "+home_dir, "UserHandler.AddUser() L37")
           }
        }
 
@@ -60,236 +49,118 @@ func addUser(usrLoginName, comment, preferredShell, sudo, usrPrivilege, passphra
        
       // Check whether group exists or not, if not, then create it
       
-      if(execComand("getent group "+ usrLoginName, "71") == "fail"){
-        execComand(sudo+" groupadd "+usrLoginName, "72")   
-      }
       
-      cmd := sudo+" /usr/sbin/useradd "+ 
+      cmd := " /usr/sbin/useradd "+ 
       "-m -d "+home_dir+                       // -d is unnecessary here, but will report error, if omit
       " -s "+preferredShell +
-      " -g "+usrLoginName+
-      " -c varmaa-'"+comment+"'"+
+      //" -g "+usrLoginName+
       " "+ usrLoginName
-      status = execComand(cmd, "81") 
+      status = agentUtil.ExecComand(cmd, "UserHandler.AddUser() L60") 
 
       if(status == "success"){
-        msg := "----------------- user successfully created -------------"
-        entryIntoLog(msg, "sudo")
+        msg := "--------- user account "+usrLoginName+" successfully created ---------------"
+        fileUtil.WriteIntoLogFile(msg)
 
-        fmt.Println("user successfully created")
-        status = execComand(sudo+" chown -R "+ usrLoginName+":"+usrLoginName+ " "+ home_dir, "85")
-        //usrPrivilege := ""
-        //permission := createPermissionToTest(usrLoginName)
-        sudoers_add(usrLoginName, usrPrivilege, sudo) 
-        genKey(usrLoginName, passphrase, sudo)
+        fmt.Println(msg)
+        status = agentUtil.ExecComand(" chown -R "+ usrLoginName+":"+usrLoginName+ " "+ home_dir, "UserHandler.AddUser() L67")
 
-        /*
-          Yet to implement
-        */
-        //parse_passwd()  
+        agentUtil.ExecComand("mkdir -p "+home_dir+"/.ssh", "UserHandler.AddUser() L71")
+        fileUtil.WriteIntoFile(home_dir+"/.ssh/authorized_keys", pubKey, true)
+       // status = agentUtil.ExecComand("chmod 700 "+home_dir+"/.ssh; chmod 640 "+home_dir+"/.ssh/authorized_keys", "UserHandler.AddUser() L74")
+        status = agentUtil.ExecComand("chmod 777 "+home_dir+"/.ssh; chmod 777 "+home_dir+"/.ssh/authorized_keys", "UserHandler.AddUser() L74")
+    
+
       }
 
     }else{
       fmt.Println("user already existed.")  
-      entryIntoLog("----- user already existed. -----", "sudo")
+      fileUtil.WriteIntoLogFile("----- user already existed. usrLoginName = : "+usrLoginName)
     }
     return status
 }
 
-
-func sudoers_add(userLoginName, usrPrivilege, sudo string){
-    //args := "userLoginName = " + userLoginName +" : permission = : "+usrPrivilege
-    //fmt.Println("Executing sudoers_add() method with following args. ", args)
-
-    if(len(usrPrivilege) >0){
-
-       /* -----  Preparation to create sudoers file in </etc/sudoers.d/userLoginName/>--------
-         There is some permission issues while creating the file /etc/sudoers.d/userLoginName directly, So
-         do it in some other way. i.e create this file in /home/userLoginName/tmpSudoersFolder,and
-         then move this file into /etc/sudoers.d/.     To do this, will take following steps
-
-         1] First create a folder in /home/userLoginName/tmpSudoersFolder
-         2] Create a file named <userLoginName> with the sample permission
-         3] Move above created file into /etc/sudoers.d directory
-         4] Remove tmpSudoersFolder directory 
-       */
-       tmpPath := "/home/" + userLoginName+"/"+ "tmpSudoersFolder";
-       execComand(sudo+" mkdir "+tmpPath, "121")
-       execComand(sudo+" chmod 777 "+tmpPath, "122")
-
-       /*
-          Below line taken from varmaa.py & MAY leads to malformed /etc/sudoers
-       */
-       //text := "\n# Generated by Varmaa "+userLoginName + permission
-       text := usrPrivilege
-       writeIntoFile(tmpPath+"/"+userLoginName,  text, true);
-       execComand(sudo+" chown root:root "+tmpPath+"/"+userLoginName, "130")
-       execComand(sudo+" chmod 0440 "+tmpPath+"/"+userLoginName, "131")
-       execComand(sudo+" mv "+tmpPath+"/"+userLoginName +" /etc/sudoers.d/", "132")
-       execComand(sudo+" rm -rvf "+tmpPath, "133")
-     }else{
-          sudoers_del(userLoginName, sudo)
-    }
-}
-
-
-
   
-func userdel(userLoginName string, sudo string, permanent bool)(string){
- 
+func Userdel(userLoginName string,  permanent bool)(string){
+  permanent = false
   removed_dir := "/home/deleted:" + userLoginName
   home_dir := "/home/" + userLoginName
-  userId :=  execComand("id -u "+userLoginName, "148");
+  userId :=  agentUtil.ExecComand("id -u "+userLoginName, "UserHandler.Userdel() L87");
   status := ""
   
   if(userId == "fail"){
+    msg := "UserHandler.UserDel(). User does not exist"+userLoginName
+    fileUtil.WriteIntoLogFile(msg)
     return "user does not existed"
   }
     
   if(permanent == false ){
-    if(isFileExisted(removed_dir)){
-        execComand(sudo+" /bin/rm -rf "+ removed_dir, "160")   
+    if(fileUtil.IsFileExisted(removed_dir)){
+        agentUtil.ExecComand("/bin/rm -rf "+ removed_dir, "UserHandler.Userdel() L96")   
     }
 
     //Check below line in all version of linux after cross compile
-    execComand(sudo+" /usr/bin/pkill -u "+ userId, "164")      
-    status = execComand(sudo+ " /usr/sbin/userdel "+ userLoginName, "165")      
-    execComand(sudo+" /bin/mv "+ home_dir +" "+removed_dir, "166")      
+    agentUtil.ExecComand("/usr/bin/pkill -u "+ userId, "UserHandler.Userdel() L100")      
+    status = agentUtil.ExecComand("/usr/sbin/userdel "+ userLoginName, "UserHandler.Userdel() L101")      
+    agentUtil.ExecComand("/bin/mv "+ home_dir +" "+removed_dir, "UserHandler.Userdel() L102")      
     
   }else{
-    status = execComand(sudo+" /usr/sbin/userdel -r "+ userLoginName, "169")      
+    status = agentUtil.ExecComand("/usr/sbin/userdel -r "+ userLoginName, "UserHandler.Userdel() L105")      
   }
-  fmt.Println("In userdel() ", status) 
-  sudoers_del(userLoginName, sudo)
+  Sudoers_del(userLoginName)
   return status
-  //parse_passwd()
-
 }
  
 
-func sudoers_del(userLoginName, sudo string){
+func Sudoers_del(userLoginName string){
   filePath := "/etc/sudoers.d/" + userLoginName
-  if(isFileExisted(filePath)){
-    execComand(sudo+" /bin/rm "+ filePath, "184")
-    
+  if(fileUtil.IsFileExisted(filePath)){
+    agentUtil.ExecComand("/bin/rm "+ filePath, "UserHandler.Userdel() L116")
   }
 }
 
 
-
-
-
-func genKey(userLoginName, passPhrase, sudo string){
- //https://blog.gopheracademy.com/advent-2015/ssh-server-in-go/
-  
-
-  rsaKeyPath := "/home/" + userLoginName+"/"+ ".ssh";
-  execComand(sudo+" mkdir "+rsaKeyPath, "303")
-  execComand(sudo+" chmod 0777 "+rsaKeyPath, "304")
-  
-  cmd := exec.Command("ssh-keygen", "-f", rsaKeyPath+"/"+userLoginName+".rsa", "-t", "rsa", "-N", passPhrase)
-  cmdOut, err := cmd.Output()
-  if err != nil {
-      errorMsg := " Error While executing genKey.  userLoginName = : "+userLoginName+" passPhrase = : "+passPhrase+" Msg = : "+err.Error()
-      entryIntoLog(errorMsg, "sudo")
-      panic(err)
-  }else{
-    fmt.Println("In genKey() successfully executed. ",cmdOut) 
-  }
+func GiveRootAccess(usrLoginName string) string{
  
-}
-
-func processToSend_RSAKey(userLoginName, userEmail string){
-
-  filePath := "/home/" + userLoginName+"/"+ ".ssh/"+userLoginName+".rsa"
-  contents := readFile(filePath, false)
-  auth := smtp.PlainAuth("", "piyushcantata@gmail.com", "pass112233", "smtp.gmail.com")
-  to := []string{userEmail}
-  msg := []byte( "Subject: RSA Private Key\r\n" + "\r\n" +contents)
-  err := smtp.SendMail("smtp.gmail.com:587", auth, "", to, msg)
-
-  if err != nil {
-    errorMsg := " Error While executing processToSend_RSAKey().  userLoginName = : "+userLoginName+" userEmail = : "+userEmail+" Msg = : "+err.Error()
-    entryIntoLog(errorMsg, "sudo")
-    panic(err)
-  }else{
-        fmt.Print("Done! Mail Sent. Check your inbox")
+  //Check whether user already existed or not. 
+  status := agentUtil.ExecComand("id "+usrLoginName, "UserHandler.AddUser() L124");
+  if(status == "fail"){
+    fmt.Println("Unable to give root access to non existed user i.e ",usrLoginName)
+    return "Unable to give root access to non existed user i.e "+usrLoginName
   }
-
-}
-
-
-
-
-func hitApi(url, sudo string) (ApiResponse){
-  entryIntoLog(" In hitApi. url = : "+url, sudo)
-  client := &http.Client{}
-  req, err := http.NewRequest( "GET", url , nil)
-  if err != nil {
-    log.Fatalln(err)
-    entryIntoLog(" ***** 387 Error in hitApi() Msg = : "+err.Error(), sudo)
-  }
-
-
-  req.Header.Add("Accept", "application/json")
-  resp, err := client.Do(req)
-  if err != nil {
-    log.Fatalln(err)
-    entryIntoLog(" 395. ***** Error in hitApi() Msg = : "+err.Error(), sudo)
-  }
-  defer resp.Body.Close()
-  decoder := json.NewDecoder(resp.Body)
-  httpResponse := ApiResponse{}
-
-
-  err = decoder.Decode(&httpResponse)
-  if err != nil {
-    log.Fatalln(err)
-    entryIntoLog(" ***** Error Msg = : "+err.Error(), sudo)
-  }
-  return httpResponse  
-}
-
-
-func toString(httpResponse ApiResponse)(string){
-  if(len(httpResponse.activityName) > 0){
-    respInStr := " activityName = "  +httpResponse.activityName  +
-                 " userName = "      +httpResponse.userName +
-                 " preferredShell = "+httpResponse.preferredShell +
-                 " comment = "       +httpResponse.comment +
-                 " usrEmail = "      +httpResponse.usrEmail +
-                 " passphrase = "    +httpResponse.passphrase +
-                 " usrPrivilege = "  +httpResponse.usrPrivilege 
-              
-
-    return respInStr
-  }
-  return ""
   
+
+  scriptPath := "/home/piyush/go_projects/scripts/sudoAdder.sh"
+  cmd := exec.Command("/bin/sh", "-c", scriptPath+" "+usrLoginName)
+  output, err := cmd.Output()
+
+  if err != nil {
+    println(err.Error())
+    msg := "UserHandler.GiveRootAccess(). Error on user "+usrLoginName+" Error Msg = : "+err.Error()
+    fileUtil.WriteIntoLogFile(msg)
+    return "1"
+  }else{
+    fmt.Println("File successfully edited...",(string(output)))
+    msg := "UserHandler.GiveRootAccess(). Success on user "+usrLoginName+" Status = : "+string(output)
+    fileUtil.WriteIntoLogFile(msg)
+    return "0"
+  }
+
 }
 
-func parseResponse(httpResponse ApiResponse )(string){
-  userName := strings.TrimSpace(httpResponse.userName)
-  if(len(userName) == 0 ){
-    return "error! blank user name"
-  }
-  sudo := ""
-  execStatus := "success"
-  if(httpResponse.activityName == "add" ){
-    prefShell := strings.TrimSpace(httpResponse.preferredShell)
-   if(len(prefShell) == 0 ){
-      prefShell = "/bin/bash"
-    }
-    
-    execStatus = addUser(httpResponse.userName , httpResponse.comment, prefShell, sudo, 
-      httpResponse.usrPrivilege , httpResponse.passphrase )
+func GiveNormalAccess(usrLoginName string) string{
+  status := agentUtil.ExecComand("id "+usrLoginName, "UserHandler.AddUser() L151");
+  if(status == "fail"){
+    msg := "UserHandler.GiveNormalAccess(). user does not exist. Chk user = : "+usrLoginName
+    fileUtil.WriteIntoLogFile(msg)
+    fmt.Println(msg)
+    return "1"
   }
 
-
-
-  if(httpResponse.activityName == "del" ){
-    execStatus = userdel(httpResponse.userName , sudo , false)
-  }
-  return execStatus
+  cmdStr := usrLoginName+"   ALL=(ALL:ALL) ALL"
+  cmd := "sed -i '/"+cmdStr+"/s/^/#/' /etc/sudoers" 
+  status = agentUtil.ExecComand(cmd, "UserHandler.GiveNormalAccess() L149");
+  msg := "UserHandler.GiveNormalAccess(). Success for user = : "+usrLoginName
+  fileUtil.WriteIntoLogFile(msg)
+  return status
 
 }
