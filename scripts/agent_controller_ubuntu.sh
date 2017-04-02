@@ -43,8 +43,8 @@ $command
 
 
 stop(){
-echo "Going to kill process agent_controller"
-pkill  agent_controller.sh
+echo "Going to kill process agent_controller_ubuntu.sh"
+pkill  agent_controller_ubuntu.sh
 
 }
 
@@ -59,7 +59,7 @@ case "$1" in
         ;;
 
 status)
-        status agent_controller.sh
+        status agent_controller_ubuntu.sh
         ;;
 
  *)
