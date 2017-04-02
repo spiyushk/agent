@@ -5,9 +5,12 @@ package stringUtil
 import (
   _ "fmt" // for unused variable issue
     "strings"
+    "crypto/rand"
+    "fmt"
+   // "strconv"
 )
 
-
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 func SplitData(data, delim string)([]string){
   data = RemoveSpace(data)
   if(len(data) > 0 ){
@@ -65,5 +68,13 @@ func FindKey(info string)(string){
    return val;
 }
 
-
-
+func RandStringBytes(n int) string {
+    //n := 5
+    b := make([]byte, n)
+    if _, err := rand.Read(b); err != nil {
+        panic(err)
+    }
+    s := fmt.Sprintf("%X", b)
+    fmt.Println("StringHandlerUtil.Random No. = : ",s)
+    return s;
+}
