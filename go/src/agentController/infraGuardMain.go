@@ -60,8 +60,8 @@ func main() {
 }//main
 
 
-
 */
+
 
 func scheduleAgentjob(){
   scheduler := gocron.NewScheduler()
@@ -71,8 +71,9 @@ func scheduleAgentjob(){
 func handleUserMgmt(){
    var nextWork []string
     nextWork = agentUtil.GetNextWork()
-    if(nextWork != nil){
+    if(nextWork != nil && len(nextWork) > 0){
     fmt.Println("InfraGuard.main(). Length infraGuardResponse = : ",len(nextWork)) 
+    ExecuteWork(nextWork)
     }else{
        fmt.Println("InfraGuard.main(). There is no new work") 
     }
