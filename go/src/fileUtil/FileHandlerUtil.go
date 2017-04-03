@@ -1,6 +1,7 @@
 
 
 package fileUtil
+// version No 1 dated :- 03-Apr-2017
 import (
     
     "fmt"

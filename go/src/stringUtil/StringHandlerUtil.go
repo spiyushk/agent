@@ -1,7 +1,7 @@
 
 
 package stringUtil
-
+// version No 1 dated :- 03-Apr-2017
 import (
   _ "fmt" // for unused variable issue
     "strings"

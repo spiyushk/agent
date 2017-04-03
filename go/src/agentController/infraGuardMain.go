@@ -1,7 +1,7 @@
 
 
 package main
-
+// version No 1 dated :- 03-Apr-2017
 import (
     
    /* 
@@ -11,19 +11,19 @@ import (
     _ "fmt" // for unused variable issue
     "net/smtp"
     "log"
-    "strings"
+      strings"
     "encoding/json"
     "net/http"
     */
-    //"agentUtil"
+   
     "stringUtil"
     "serverMgmt"
     "fmt"
     "fileUtil"
-   // "userMgmt"
-    "agentUtil"
     "userMgmt"
-    "github.com/jasonlvhit/gocron"  // go get github.com/robfig/cron  
+    "agentUtil"
+    "github.com/jasonlvhit/gocron"  // go get github.com/robfig/cron 
+     "strings"
     //"strconv"
 )
 var freqToHitApi_InSeconds uint64 = 20
@@ -31,16 +31,15 @@ var freqToHitApi_InSeconds uint64 = 20
 /*func main() {
     nextWork := agentUtil.GetNextWork()
     if(nextWork != nil){
-    fmt.Println("\n\nInfraGuard.main(). Length infraGuardResponse = : ",len(nextWork)) 
-    ExecuteWork(nextWork)
+     ExecuteWork(nextWork)
     }else{
        fmt.Println("InfraGuard.main(). There is no new work") 
     }
   
 }
 
-
 */
+
 
 
 func main() {
@@ -50,7 +49,8 @@ func main() {
   if(respStr =="0"){
     fmt.Printf("\nServer Regn process executed successfully\n")
     fileUtil.WriteIntoLogFile("InfraGuard.main(). Server Regn process executed successfully")
-    fileUtil.WriteIntoLogFile("InfraGuard.main(). Scheduling agent jon on 20 seconds")
+    fmt.Printf("---------- Scheduling agent job on every 20 seconds fired -------------")
+    fileUtil.WriteIntoLogFile("---------- Scheduling agent job on every 20 seconds fired -------------")
     scheduleAgentjob()
    
   }else{
@@ -72,8 +72,7 @@ func handleUserMgmt(){
    var nextWork []string
     nextWork = agentUtil.GetNextWork()
     if(nextWork != nil && len(nextWork) > 0){
-    fmt.Println("InfraGuard.main(). Length infraGuardResponse = : ",len(nextWork)) 
-    ExecuteWork(nextWork)
+     ExecuteWork(nextWork)
     }else{
        fmt.Println("InfraGuard.main(). There is no new work") 
     }
@@ -83,14 +82,15 @@ func handleUserMgmt(){
 
 func ExecuteWork(nextWork []string){
   //const delim = ":"
-  var pubKey, userName, prefShell, privilege string
+  var pubKey, userName, prefShell, privilege, id string
   var values []string
 
   for i := 0; i < len(nextWork); i++{
     values = stringUtil.SplitData(nextWork[i], agentUtil.Delimiter)
-    
+
+    fmt.Println("----------------------------------------------------------------------------------\n")
     if(values[1] == "addUser"){
-       
+        serverUrl := "https://spjuv2c0ae.execute-api.us-west-2.amazonaws.com/dev/addeduserbyagent"
         values = stringUtil.SplitData(nextWork[i+1], agentUtil.Delimiter)
         pubKey = values[1]
 
@@ -102,51 +102,95 @@ func ExecuteWork(nextWork []string){
         values = stringUtil.SplitData(nextWork[i+3], agentUtil.Delimiter)
         prefShell = values[1]
 
-        fmt.Println("userName = : ", userName)
-        fmt.Println("Activity Name ----------- Add User -----------------------")
-        fmt.Println("pubKey = : ", pubKey)
-        fmt.Println("userName = : ", userName)
-        fmt.Println("prefShell = : ", prefShell)
+        values = stringUtil.SplitData(nextWork[i+4], agentUtil.Delimiter)
+        id = values[1]
 
+      
+        msg :=  "Going to add userName = : "+userName
+        fmt.Println(msg)
         status := userMgmt.AddUser(userName, prefShell, pubKey ) 
-        fmt.Println("\n247. AgentUtil.ExecuteWork(). Status Add User = : ",status)
 
-        i += 3
+      
+        fmt.Println("247. AgentUtil.ExecuteWork(). Status Add User = : ",status)
+        sendExecutionStatus(serverUrl, status , id, userName)
+      
+        i += 4
 
     }
 
     if(values[1] == "deleteUser"){
+        serverUrl := "https://vglxmaiux1.execute-api.us-west-2.amazonaws.com/dev/deleteduserbyagent"
         values = stringUtil.SplitData(nextWork[i+1], agentUtil.Delimiter)
         userName = values[1]
-        fmt.Println("----------- userName to delete = : ", userName)
-        userName = "Vinyl94EC6C"
+
+        values = stringUtil.SplitData(nextWork[i+2], agentUtil.Delimiter)
+        id = values[1]
+
+        msg :=  "Going to delete userName = : "+userName
+        fmt.Println(msg)
+
         status := userMgmt.Userdel(userName, false)
-        fmt.Println("142. status deleteUser  = : ", status)
-        i += 1
+        fmt.Println("status deleteUser  = : ", status)
+        sendExecutionStatus(serverUrl, status , id, userName)
+        i += 2
     }
 
     if(values[1] == "changePrivilege"){
+      serverUrl := "https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent"
       status := ""
         values = stringUtil.SplitData(nextWork[i+1], agentUtil.Delimiter)
         userName = values[1]
 
         values = stringUtil.SplitData(nextWork[i+2], agentUtil.Delimiter)
         privilege = values[1]
+
+        values = stringUtil.SplitData(nextWork[i+3], agentUtil.Delimiter)
+        id = values[1]
+
         
-        msg := "privilege = : "+privilege +" >> userName = : "+userName
+        msg :=  "Going to change privilege for userName = : "+userName+ " Priv = : "+privilege
         fmt.Println(msg)
+
+      
         if(privilege == "root"){
            status = userMgmt.GiveRootAccess(userName)
         }else{
              status = userMgmt.GiveNormalAccess(userName)
          }
+
+        sendExecutionStatus(serverUrl, status , id, userName) 
        
-        fmt.Println("142. status changePrivilege  = : ", status) //success
-        i += 2
+        fmt.Println("status changePrivilege  = : ", status) 
+        i += 3
     }
-    
+    fmt.Println("----------------------------------------------------------------------------------\n")
    
   }
 
 }
 
+
+func sendExecutionStatus(serverUrl string, status string, id string, param ... string) string{
+
+   serverIp := agentUtil.ExecComand("hostname --all-ip-addresses", "ServerHandler.go 74")
+   serverIp = strings.TrimSpace(serverIp)
+  
+
+
+  qryStr := "?serverIp="+serverIp+"&id="+id
+  if(len(param) >= 1){
+    qryStr = qryStr + "&userName="+ param[0]
+  }
+  
+  if(status == "success"){
+    qryStr = qryStr + "&status=0"
+  }else{
+    qryStr = qryStr + "&status=1"
+  }
+
+  serverUrl = serverUrl + qryStr
+  serverUrl = strings.Replace(serverUrl, "\n","",-1)
+  status = agentUtil.HitAnyUrl(serverUrl)
+  return status
+
+}//sendExecutionStatus
