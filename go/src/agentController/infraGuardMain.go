@@ -49,8 +49,8 @@ func main() {
   if(respStr =="0"){
     fmt.Printf("\nServer Regn process executed successfully\n")
     fileUtil.WriteIntoLogFile("InfraGuard.main(). Server Regn process executed successfully")
-    fmt.Printf("---------- Scheduling agent job on every 20 seconds fired -------------")
-    fileUtil.WriteIntoLogFile("---------- Scheduling agent job on every 20 seconds fired -------------")
+    fmt.Printf("---------- Agent next job will be fire on every 20 seconds. Waiting  -------------")
+    fileUtil.WriteIntoLogFile("---------- Agent next job will be fire on every 20 seconds. Waiting  -------------")
     scheduleAgentjob()
    
   }else{
