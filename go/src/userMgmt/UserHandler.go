@@ -1,7 +1,7 @@
 
 
 package userMgmt
-
+// version No 1 dated :- 03-Apr-2017
 import (
     
     "fmt"
@@ -125,11 +125,13 @@ func GiveRootAccess(usrLoginName string) string{
   status := agentUtil.ExecComand("id "+usrLoginName, "UserHandler.AddUser() L124");
   if(status == "fail"){
     fmt.Println("Unable to give root access to non existed user i.e ",usrLoginName)
-    return "Unable to give root access to non existed user i.e "+usrLoginName
+    return status
   }
   
 
-  scriptPath := "/home/piyush/go_projects/scripts/sudoAdder.sh"
+  //scriptPath := "/home/piyush/go_projects/scripts/sudoAdder.sh"
+  scriptPath := "/opt/infraguard/etc/sudoAdder.sh"
+  
   cmd := exec.Command("/bin/sh", "-c", scriptPath+" "+usrLoginName)
   output, err := cmd.Output()
 
