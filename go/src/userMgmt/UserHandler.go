@@ -14,11 +14,11 @@ import (
      //"stringUtil"
 
    // "os"
-    "os/exec"
+    //"os/exec"
     _ "fmt" // for unused variable issue
   //  "net/smtp"
    // "log"
-   // "strings" n
+      "strings" 
     
      //"reflect"
     // "strconv"
@@ -28,15 +28,8 @@ func AddUser(usrLoginName, preferredShell, pubKey string) string {
    
     removed_dir := "/home/deleted:" + usrLoginName
     home_dir := "/home/" + usrLoginName
-      
-     //Check whether user already existed or not. 
-     status := agentUtil.ExecComand("id "+usrLoginName, "UserHandler.AddUser() L28");
-     fmt.Println("33. UserHandler.AddUser()  status = : ", status)
-
-     /* status ='fail' specify error,  'id usrLoginName' returns error due to absence of user existence
-        So, below code block process to create new User Account
-     */
-    if(status == "fail") {
+    status := ""
+    if(isUserExist(usrLoginName) == false) {
         if(fileUtil.IsFileExisted(home_dir) == false){
           if(fileUtil.IsFileExisted(removed_dir) == true){
             agentUtil.ExecComand("/bin/mv "+ removed_dir +" "+home_dir, "UserHandler.AddUser() L37")
@@ -65,7 +58,7 @@ func AddUser(usrLoginName, preferredShell, pubKey string) string {
         status = agentUtil.ExecComand(" chown -R "+ usrLoginName+":"+usrLoginName+ " "+ home_dir, "UserHandler.AddUser() L67")
 
         agentUtil.ExecComand("mkdir -p "+home_dir+"/.ssh", "UserHandler.AddUser() L71")
-        fileUtil.WriteIntoFile(home_dir+"/.ssh/authorized_keys", pubKey, true)
+        fileUtil.WriteIntoFile(home_dir+"/.ssh/authorized_keys", pubKey, false, true)
        // status = agentUtil.ExecComand("chmod 700 "+home_dir+"/.ssh; chmod 640 "+home_dir+"/.ssh/authorized_keys", "UserHandler.AddUser() L74")
         status = agentUtil.ExecComand("chmod 777 "+home_dir+"/.ssh; chmod 777 "+home_dir+"/.ssh/authorized_keys", "UserHandler.AddUser() L74")
     
@@ -119,7 +112,7 @@ func Sudoers_del(userLoginName string){
 }
 
 
-func GiveRootAccess(usrLoginName string) string{
+/*func GiveRootAccess(usrLoginName string) string{
  
   //Check whether user already existed or not. 
   status := agentUtil.ExecComand("id "+usrLoginName, "UserHandler.AddUser() L124");
@@ -165,4 +158,91 @@ func GiveNormalAccess(usrLoginName string) string{
   fileUtil.WriteIntoLogFile(msg)
   return status
 
+}
+*/
+
+func ProcessToChangePrivilege(usrName, privType string) string{
+    if(isUserExist(usrName) == false) {
+
+      msg := "Unable to change priviliges for user "+usrName +" : This user not existed"
+      fileUtil.WriteIntoLogFile(msg)
+      return "1"
+    }
+    accessRight := usrName+"   ALL=(ALL:ALL) ALL"
+    
+    
+    // Read /etc/sudoers file for user access right, if any
+    cmd := "awk '/"+usrName+"/ {print}' /etc/sudoers"
+    oldPriv := agentUtil.ExecComand(cmd, "misc. L78")
+    fmt.Println("79 oldPriv : = ",oldPriv)
+    if(oldPriv == "success"){
+        oldPriv = ""
+    }
+    
+
+    tmpFilePath := "/tmp/sudoers.bak"
+    status := ""
+  
+    // Create  a back up copy of /etc/sudoers file
+    status = agentUtil.ExecComand("cp /etc/sudoers "+tmpFilePath, "misc. L38")
+    fmt.Println("status at 26.  = : ", status)
+
+    status = agentUtil.ExecComand("chmod 777 "+tmpFilePath, "misc. L41")
+    fmt.Println("status at 29.  = : ", status)
+
+
+    if( privType == "root"){
+        if(len(oldPriv) == 0){
+                    
+            fileUtil.WriteIntoFile(tmpFilePath, accessRight, true, false)
+            fmt.Println("condition matched at 52.  = : ")
+            // Replace the sudoers file with the tmpFilePath 
+            status = agentUtil.ExecComand("cp "+tmpFilePath +" /etc/sudoers", "misc. L38")
+
+            msg := " userName = "+usrName+" Requested access = : "+ privType +" done. New entry in /etc/sudoers file. Status = : "+status
+            fileUtil.WriteIntoLogFile(msg)
+            
+        }else{
+             // If old priv is commented, then remove such comment
+            if(strings.Contains(oldPriv, "#")){
+                status = fileUtil.ReplaceLineOrLinesIntoFile(tmpFilePath, oldPriv, accessRight)
+               
+                // Replace the sudoers file with the tmpFilePath 
+                status = agentUtil.ExecComand("cp "+tmpFilePath +" /etc/sudoers", "misc. L38")
+
+                msg := " userName = "+usrName+" Requested access = : "+ privType +" done. Previously access right commented in /etc/sudoers file. Status = : "+status
+                fileUtil.WriteIntoLogFile(msg)
+            }   
+        }
+    }
+
+    // If user's old priv is root level access, then comment access right data to become a normal user
+    if( privType == "user"){
+        if(len(oldPriv) > 0){
+            status = fileUtil.ReplaceLineOrLinesIntoFile(tmpFilePath, oldPriv, "#"+accessRight)
+            // Replace the sudoers file with the tmpFilePath 
+            status = agentUtil.ExecComand("cp "+tmpFilePath +" /etc/sudoers", "misc. L38")
+
+            msg := " userName = "+usrName+" Requested access = : "+ privType +" done. Previously access right has root Access. Now it is commented in /etc/sudoers file. Status = : "+status
+            fileUtil.WriteIntoLogFile(msg)
+        }
+    }
+
+    msg := " userName = "+usrName+" Requested access = : "+ privType +" done. /etc/sudoers file is unaffected. Status = : "+status
+    fileUtil.WriteIntoLogFile(msg)
+    return status
+}
+
+
+func isUserExist(usrName string) bool{
+  status := agentUtil.ExecComand("id "+usrName, "UserHandler.AddUser() L28");
+  fmt.Println("33. UserHandler.AddUser()  status = : ", status)
+
+     /* status ='fail' specify error,  'id usrLoginName' returns error due to absence of user existence
+        So, below code block process to create new User Account
+     */
+    if(status == "fail") {
+      return false;
+    }
+    return true;
 }

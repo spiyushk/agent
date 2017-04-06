@@ -4,18 +4,7 @@ package main
 // version No 1 dated :- 03-Apr-2017
 import (
     
-   /* 
-    "io/ioutil"
-    "os"
-    "os/exec"
-    _ "fmt" // for unused variable issue
-    "net/smtp"
-    "log"
-      strings"
-    "encoding/json"
-    "net/http"
-    */
-   
+  
     "stringUtil"
     "serverMgmt"
     "fmt"
@@ -108,10 +97,9 @@ func ExecuteWork(nextWork []string){
       
         msg :=  "Going to add userName = : "+userName
         fmt.Println(msg)
+        fileUtil.WriteIntoLogFile(msg)
         status := userMgmt.AddUser(userName, prefShell, pubKey ) 
-
-      
-        fmt.Println("247. AgentUtil.ExecuteWork(). Status Add User = : ",status)
+       
         sendExecutionStatus(serverUrl, status , id, userName)
       
         i += 4
@@ -128,6 +116,7 @@ func ExecuteWork(nextWork []string){
 
         msg :=  "Going to delete userName = : "+userName
         fmt.Println(msg)
+        fileUtil.WriteIntoLogFile(msg)
 
         status := userMgmt.Userdel(userName, false)
         fmt.Println("status deleteUser  = : ", status)
@@ -150,14 +139,18 @@ func ExecuteWork(nextWork []string){
         
         msg :=  "Going to change privilege for userName = : "+userName+ " Priv = : "+privilege
         fmt.Println(msg)
+        fileUtil.WriteIntoLogFile(msg)
+
+        status = userMgmt.ProcessToChangePrivilege(userName, privilege)
+
 
       
-        if(privilege == "root"){
+       /* if(privilege == "root"){
            status = userMgmt.GiveRootAccess(userName)
         }else{
              status = userMgmt.GiveNormalAccess(userName)
          }
-
+*/
         sendExecutionStatus(serverUrl, status , id, userName) 
        
         fmt.Println("status changePrivilege  = : ", status) 

@@ -20,7 +20,8 @@ import (
 )
 
 //const url = "https://8zq40bjoqc.execute-api.us-west-2.amazonaws.com/dev/hello"
-const url = "https://xhas8lgghd.execute-api.us-west-2.amazonaws.com/dev/getinstructionsforagent?serverIp=192.168.1.1"
+//const url = "https://xhas8lgghd.execute-api.us-west-2.amazonaws.com/dev/getinstructionsforagent?serverIp=192.168.1.1"
+const url = "https://xhas8lgghd.execute-api.us-west-2.amazonaws.com/dev/getinstructionsforagent?serverIp=172.31.15.1"
 var maxSize int = 100
 var array = make([]string, maxSize) 
 var cntr int = 0
@@ -87,11 +88,14 @@ func GetNextWork() ([]string){
     if(respStatus == "0"){
      
       isValidData := ValidateArray()
-      // printArray()
+     
       msg := "\n************ Is server responses valid data =  "+strconv.FormatBool(isValidData) +" ***********************\n"
-      fmt.Println(msg)
       fileUtil.WriteIntoLogFile(msg)
       if(isValidData){
+        
+        fmt.Println(msg)
+         printArray()
+
          if(len(array) > 0 ){
              
              var tmp = array
@@ -109,9 +113,6 @@ func GetNextWork() ([]string){
   }
   return nil
 }
-
-//http://stackoverflow.com/questions/29366038/looping-iterate-over-the-second-level-nested-json-in-go-lang
-
 
 func parseMap(aMap map[string]interface{}) {
     for key, val := range aMap {
@@ -177,10 +178,10 @@ func initializeArray(key, val string){
 
 func printArray(){
   fmt.Println("Agent has below following works")
+  fileUtil.WriteIntoLogFile("Agent has below following works")
    for i := 0; i < len(array); i++ {
     val := array[i]
     fmt.Println(val)
-    fileUtil.WriteIntoLogFile("Agent has below following works")
     fileUtil.WriteIntoLogFile(val)
   }
 }
@@ -190,7 +191,7 @@ func printArray(){
 func ValidateArray() bool{
   
   var values []string
-  printArray()
+ //printArray()
 
    for i := 0; i < len(array); i++ {
    values = stringUtil.SplitData(array[i], Delimiter)

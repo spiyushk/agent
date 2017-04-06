@@ -91,10 +91,11 @@ func getQueryString()(string){
  /*
     Read Command line arguments given at the time of agentInstaller.sh execution
  */
+ //var sName, pId, licenseKey string
  var sName, pId, licenseKey string
  sName = "notGiven"
  pId = "notGiven"
- licenseKey = "notGiven"
+ licenseKey = ""
 
  if(fileUtil.IsFileExisted("/tmp/serverInfo.txt")){
   args := stringUtil.SplitData(fileUtil.ReadFile("/tmp/serverInfo.txt", false), ":")
@@ -114,7 +115,7 @@ func getQueryString()(string){
  kernelDetails = stringUtil.FindKey(kernelDetails)
 
 
- qryStr := "?serverName=testingServer507&serverIp="+serverIp+"&hostName="+hostName+"&projectId=5&userList="+users+"&sName="+sName+"&pId="+pId+"&licenseKey="+licenseKey
+ qryStr := "?serverName="+sName+"&serverIp="+serverIp+"&hostName="+hostName+"&projectId="+pId+"&userList="+users+"&licenseKey="+licenseKey
  qryStr = strings.Replace(qryStr, "\n","",-1)
  return qryStr
 }
