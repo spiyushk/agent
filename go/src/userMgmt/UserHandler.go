@@ -8,6 +8,13 @@ import (
     //"io/ioutil"
     // "encoding/json"
      //"net/http"
+
+     //  "io/ioutil"
+     //  "net/http"
+    
+     //"reflect"
+    // "strconv"
+    
      "fileUtil"
      "agentUtil"
      //"os/exec" ---------------------------------
@@ -19,9 +26,8 @@ import (
   //  "net/smtp"
    // "log"
       "strings" 
-    
-     //"reflect"
-    // "strconv"
+      "stringUtil"
+
 )
 
 func AddUser(usrLoginName, preferredShell, pubKey string) string {
@@ -74,7 +80,7 @@ func AddUser(usrLoginName, preferredShell, pubKey string) string {
 
   
 func Userdel(userLoginName string,  permanent bool)(string){
-  permanent = false
+ 
   removed_dir := "/home/deleted:" + userLoginName
   home_dir := "/home/" + userLoginName
   userId :=  agentUtil.ExecComand("id -u "+userLoginName, "UserHandler.Userdel() L87");
@@ -97,7 +103,7 @@ func Userdel(userLoginName string,  permanent bool)(string){
     agentUtil.ExecComand("/bin/mv "+ home_dir +" "+removed_dir, "UserHandler.Userdel() L102")      
     
   }else{
-    status = agentUtil.ExecComand("/usr/sbin/userdel -r "+ userLoginName, "UserHandler.Userdel() L105")      
+    status = agentUtil.ExecComand("sudo /usr/sbin/userdel -r "+ userLoginName, "UserHandler.Userdel() L105")      
   }
   Sudoers_del(userLoginName)
   return status
@@ -110,56 +116,6 @@ func Sudoers_del(userLoginName string){
     agentUtil.ExecComand("/bin/rm "+ filePath, "UserHandler.Userdel() L116")
   }
 }
-
-
-/*func GiveRootAccess(usrLoginName string) string{
- 
-  //Check whether user already existed or not. 
-  status := agentUtil.ExecComand("id "+usrLoginName, "UserHandler.AddUser() L124");
-  if(status == "fail"){
-    fmt.Println("Unable to give root access to non existed user i.e ",usrLoginName)
-    return status
-  }
-  
-
-  //scriptPath := "/home/piyush/go_projects/scripts/sudoAdder.sh"
-  scriptPath := "/opt/infraguard/etc/sudoAdder.sh"
-  
-  cmd := exec.Command("/bin/sh", "-c", scriptPath+" "+usrLoginName)
-  output, err := cmd.Output()
-
-  if err != nil {
-    println(err.Error())
-    msg := "UserHandler.GiveRootAccess(). Error on user "+usrLoginName+" Error Msg = : "+err.Error()
-    fileUtil.WriteIntoLogFile(msg)
-    return "1"
-  }else{
-    fmt.Println("File successfully edited...",(string(output)))
-    msg := "UserHandler.GiveRootAccess(). Success on user "+usrLoginName+" Status = : "+string(output)
-    fileUtil.WriteIntoLogFile(msg)
-    return "0"
-  }
-
-}
-
-func GiveNormalAccess(usrLoginName string) string{
-  status := agentUtil.ExecComand("id "+usrLoginName, "UserHandler.AddUser() L151");
-  if(status == "fail"){
-    msg := "UserHandler.GiveNormalAccess(). user does not exist. Chk user = : "+usrLoginName
-    fileUtil.WriteIntoLogFile(msg)
-    fmt.Println(msg)
-    return "1"
-  }
-
-  cmdStr := usrLoginName+"   ALL=(ALL:ALL) ALL"
-  cmd := "sed -i '/"+cmdStr+"/s/^/#/' /etc/sudoers" 
-  status = agentUtil.ExecComand(cmd, "UserHandler.GiveNormalAccess() L149");
-  msg := "UserHandler.GiveNormalAccess(). Success for user = : "+usrLoginName
-  fileUtil.WriteIntoLogFile(msg)
-  return status
-
-}
-*/
 
 func ProcessToChangePrivilege(usrName, privType string) string{
     if(isUserExist(usrName) == false) {
@@ -178,7 +134,6 @@ func ProcessToChangePrivilege(usrName, privType string) string{
     if(oldPriv == "success"){
         oldPriv = ""
     }
-    
 
     tmpFilePath := "/tmp/sudoers.bak"
     status := ""
@@ -246,3 +201,165 @@ func isUserExist(usrName string) bool{
     }
     return true;
 }
+
+// i
+func UserAccountController(activityName string, nextWork []string, callerLoopCntr int) (int){
+    var pubKey, userName, prefShell, privilege, id string
+    var values []string
+    
+    if(activityName == "addUser"){
+     
+        responseUrl := "https://spjuv2c0ae.execute-api.us-west-2.amazonaws.com/dev/addeduserbyagent"
+        values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
+        pubKey = values[1]
+
+
+        values = stringUtil.SplitData(nextWork[callerLoopCntr+2], agentUtil.Delimiter)
+        //userName = values[1] + stringUtil.RandStringBytes(3)
+        userName = values[1]
+        
+        values = stringUtil.SplitData(nextWork[callerLoopCntr+3], agentUtil.Delimiter)
+        prefShell = values[1]
+
+        values = stringUtil.SplitData(nextWork[callerLoopCntr+4], agentUtil.Delimiter)
+        id = values[1]
+
+      
+        msg :=  "Going to add userName = : "+userName
+        fmt.Println(msg)
+        fileUtil.WriteIntoLogFile(msg)
+        status := AddUser(userName, prefShell, pubKey ) 
+       
+        agentUtil.SendExecutionStatus(responseUrl, status , id, userName)
+      
+        callerLoopCntr += 4
+        return callerLoopCntr
+
+    }
+// i
+    if(activityName == "deleteUser"){
+        responseUrl := "https://vglxmaiux1.execute-api.us-west-2.amazonaws.com/dev/deleteduserbyagent"
+        values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
+        userName = values[1]
+
+        values = stringUtil.SplitData(nextWork[callerLoopCntr+2], agentUtil.Delimiter)
+        id = values[1]
+
+        msg :=  "Going to delete userName = : "+userName
+        fmt.Println(msg)
+        fileUtil.WriteIntoLogFile(msg)
+
+        status := Userdel(userName, false)
+        fmt.Println("status deleteUser  = : ", status)
+        agentUtil.SendExecutionStatus(responseUrl, status , id, userName)
+        callerLoopCntr += 2
+        return callerLoopCntr
+    }
+
+    if(activityName == "changePrivilege"){
+      responseUrl := "https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent"
+
+     
+      status := ""
+        values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
+        userName = values[1]
+
+        values = stringUtil.SplitData(nextWork[callerLoopCntr+2], agentUtil.Delimiter)
+        privilege = values[1]
+
+        values = stringUtil.SplitData(nextWork[callerLoopCntr+3], agentUtil.Delimiter)
+        id = values[1]
+
+        
+        msg :=  "Going to change privilege for userName = : "+userName+ " Priv = : "+privilege
+        fmt.Println(msg)
+        fileUtil.WriteIntoLogFile(msg)
+
+        status = ProcessToChangePrivilege(userName, privilege)
+        agentUtil.SendExecutionStatus(responseUrl, status , id, userName) 
+       
+        fmt.Println("status changePrivilege  = : ", status) 
+        callerLoopCntr += 3
+        return callerLoopCntr
+    }
+
+    /*
+      ----------------------------------  Lock down server -------------------------------------
+      Pssible data format is given below
+      activityName:lockDownServer requiredData:{"userList":"ec2-user,pratyush,sampath,piyush,prashant.gyan"} id:5]
+    */
+
+     if(activityName == "lockDownServer"){
+      // serverUrl
+        //responseUrl := "https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent"
+        status := ""
+        var userList []string 
+        values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
+        if(len(values) == 2){
+          userList = stringUtil.SplitData(values[1], ",") 
+          fmt.Println("userList from api = : ", userList)
+
+          userList = getUserList() 
+          values = stringUtil.SplitData(nextWork[callerLoopCntr+2], agentUtil.Delimiter)
+          id = values[1]
+        }
+      
+       
+        fmt.Println("Going to lock Down Server. Deletable users are = : ",userList)
+        fileUtil.WriteIntoLogFile("Going to lock Down Server. Deletable users are = : "+strings.Join(userList,","))
+
+
+        // Below variable is used to send information about the user which is not lock for any reason.
+        unableToLockUserList := "" //notDeletedUser
+        
+        // Below callerLoopCntr is used to control the loop iteration in caller function.
+        callerLoopCntr += 2
+
+        for j := 0; j < len(userList); j++{
+            userName = userList[j]
+            fmt.Println("Going to expire user account, name = : ",userName)
+
+           
+           /*
+             disallow peter from logging in --> sudo usermod --expiredate 1 userName
+             set expiration date of peter to Never :- sudo usermod --expiredate "" userName
+           */
+            status = agentUtil.ExecComand("sudo usermod --expiredate 1 "+ userName, "UserHandler.lockDownServer() L326")
+            fmt.Println("status to lock user = : ",status)
+
+            msg :=  "Locking status of user =: "+userName +" is "+status
+            fmt.Println(msg)
+            fileUtil.WriteIntoLogFile(msg)
+
+            if(status != "success"){
+              unableToLockUserList = unableToLockUserList + userName + ","
+            }
+         }
+
+         //Truncate last comma ','
+         if(strings.Contains(unableToLockUserList, ",")){
+            unableToLockUserList = unableToLockUserList[0:len(unableToLockUserList)-1]
+         }else{
+            // if all listed user deleted, then pass response as 'ok'
+            unableToLockUserList = ""
+         }
+        fmt.Println("324. unableToLockUserList = : ", unableToLockUserList)
+
+        //agentUtil.SendExecutionStatus(responseUrl, status , id, unableToLockUserList) 
+        fmt.Println("334. UserAccountController status lockDownServer  = : ", status) 
+        return callerLoopCntr
+    }
+
+
+    return callerLoopCntr
+
+  }//UserAccountController
+
+  
+  func getUserList()([]string){
+   // b := [5]string{"tecmint","testUser","rajeevSir1","rajeevSir2", "sadfsdfsdf"}
+     users := []string{"rajeevSir2"}
+     return users
+  }
+
+  

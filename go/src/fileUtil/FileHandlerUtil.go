@@ -119,8 +119,6 @@ func WriteIntoLogFile(msg string) {
   log.SetOutput(f)
   msg = strings.Replace(msg, "\n","",-1)
   log.Println(msg)
-
-
 }
 
 

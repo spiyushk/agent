@@ -11,8 +11,13 @@ import (
 )
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+
 func SplitData(data, delim string)([]string){
-  data = RemoveSpace(data)
+   data = strings.TrimSpace(data)
+ // data = RemoveSpace(data)
+
+ 
   if(len(data) > 0 ){
     return strings.Split(data, delim)
   }else{
@@ -21,6 +26,7 @@ func SplitData(data, delim string)([]string){
 }
 
 func RemoveSpace(words string)(string){
+  
   words = strings.TrimSpace(words)
   list := strings.Split(words," ")
   if(len(list) == 0){
@@ -77,4 +83,11 @@ func RandStringBytes(n int) string {
     s := fmt.Sprintf("%X", b)
     fmt.Println("StringHandlerUtil.Random No. = : ",s)
     return s;
+}
+
+func RemoveSymplos(word string, symbols... string)(string){
+    for _, v := range symbols {
+         word = strings.Replace(word, v, "", -1)
+    }
+    return word
 }
