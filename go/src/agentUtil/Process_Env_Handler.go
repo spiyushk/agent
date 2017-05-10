@@ -65,7 +65,7 @@ func Send_EnVData(){
 func SetEnvData(userName, envKey, envVal string) string{
   // https://www.digitalocean.com/community/tutorials/how-to-read-and-set-environmental-and-shell-variables-on-a-linux-vps#printing-shell-and-environmental-variables
   
-  status := ExecComand("id "+userName, "Process_Env_Handler.SetEnvData() L70");
+  status := ExecComand("id "+userName, "Process_Env_Handler.SetEnvData() L68");
   fmt.Println("33. Process_Env_Handler.SetEnvData()  isUserExist = : ", status)
 
   if(status == "fail"){
@@ -82,7 +82,7 @@ func SetEnvData(userName, envKey, envVal string) string{
 
 
   cmd = "su - "+userName+" -c env | grep HOME"
-  usrHomeDir2 := ExecComand(cmd, "Process_Env_Mgmt.setEnv() L86")
+  usrHomeDir2 := ExecComand(cmd, "Process_Env_Mgmt.setEnv() L85")
   fmt.Println("87 -------------------- usrHomeDir2 = : ", usrHomeDir2)
 
   if(len(usrHomeDir) == 0){
@@ -97,11 +97,11 @@ func SetEnvData(userName, envKey, envVal string) string{
   fmt.Println("75. bashRcPath = : ", bashRcPath)
 
   cmd = "echo 'export "+envKey+"="+envVal+"' >> "+bashRcPath
-  status = ExecComand(cmd, "Process_Env_Mgmt.setEnv() L92")
+  status = ExecComand(cmd, "Process_Env_Mgmt.setEnv() L100")
   fmt.Println("82. set Env status = : ", status)
 
   cmd = "source "+bashRcPath
-  status = ExecComand(cmd, "Process_Env_Mgmt.setEnv() L100")
+  status = ExecComand(cmd, "Process_Env_Mgmt.setEnv() L104")
   fmt.Println("89. After sourcing  status = : ", status)
 
   if(status == "success"){

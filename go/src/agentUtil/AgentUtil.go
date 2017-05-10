@@ -35,7 +35,7 @@ func ExecComand(cmd, fromFile string) string {
     
  func SendExecutionStatus(serverUrl string, status string, id string, param ... string) string{
 
-   serverIp := ExecComand("hostname --all-ip-addresses", "ServerHandler.go 74")
+   serverIp := ExecComand("hostname --all-ip-addresses", "AgentUtil.SendExecutionStatus.go 38")
    serverIp = strings.TrimSpace(serverIp)
   
 
@@ -58,12 +58,12 @@ func ExecComand(cmd, fromFile string) string {
   */
   res, err := http.Get(serverUrl)
   if err != nil {
-      fileUtil.WriteIntoLogFile("Error at AgentUtil.sendExecutionStatus(). LN 297. Msg = : "+err.Error())
+      fileUtil.WriteIntoLogFile("Error at AgentUtil.sendExecutionStatus(). LN 61. Msg = : "+err.Error())
       status =  "1"
   }
   _, error := ioutil.ReadAll(res.Body)
   if error != nil {
-    fileUtil.WriteIntoLogFile("Error at AgentUtil.sendExecutionStatus(). LN 305.. Msg = : "+error.Error())
+    fileUtil.WriteIntoLogFile("Error at AgentUtil.sendExecutionStatus(). LN 66. Msg = : "+error.Error())
     status =  "1"
   }
 

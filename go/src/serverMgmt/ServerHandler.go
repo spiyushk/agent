@@ -24,18 +24,18 @@ func DoServerRegnProcess() (string){
 
     res, err := http.Get(url)
     if err != nil {
-        fileUtil.WriteIntoLogFile("Error at ServerHandler.DoServerRegnProcess(). LN 35. Msg = : "+err.Error())
+        fileUtil.WriteIntoLogFile("Error at ServerHandler.DoServerRegnProcess(). LN 27. Msg = : "+err.Error())
         return "1"
     }
     body, err := ioutil.ReadAll(res.Body)
     if err != nil {
-      fileUtil.WriteIntoLogFile("Error at ServerHandler.DoServerRegnProcess(). LN. 40. Msg = : "+err.Error())
+      fileUtil.WriteIntoLogFile("Error at ServerHandler.DoServerRegnProcess(). LN. 32. Msg = : "+err.Error())
       return "1"
     }
     var data interface{} 
     err = json.Unmarshal(body, &data)
     if err != nil {
-        fileUtil.WriteIntoLogFile("Error at ServerHandler.DoServerRegnProcess(). LN 46. Msg = : "+err.Error())
+        fileUtil.WriteIntoLogFile("Error at ServerHandler.DoServerRegnProcess(). LN 38. Msg = : "+err.Error())
         return "1"
     }
 
@@ -68,7 +68,7 @@ func getQueryString()(string){
    serverIp = strings.TrimSpace(serverIp)
    hostName = strings.TrimSpace(hostName)
    
-   userList := agentUtil.ExecComand("cat /etc/passwd | grep '/home' | cut -d: -f1", "ServerHandler.go 84")
+   userList := agentUtil.ExecComand("cat /etc/passwd | grep '/home' | cut -d: -f1", "ServerHandler.go 71")
    userList2 := strings.Split(userList,"\n")
 
   
@@ -103,7 +103,7 @@ func getQueryString()(string){
     sName = args[0];
     pId = args[1];
     licenseKey = args[2];
-    agentUtil.ExecComand("rm -r /tmp/serverInfo.txt", "ServerHandler.go 116")
+    agentUtil.ExecComand("rm -r /tmp/serverInfo.txt", "ServerHandler.go 106")
   }
  }
 
@@ -111,7 +111,7 @@ func getQueryString()(string){
  cpuDetails := agentUtil.ExecComand("lscpu", "ServerHandler.go 105")
  cpuDetails = stringUtil.FindKey(cpuDetails)
 
- kernelDetails := agentUtil.ExecComand("cat /etc/*-release", "ServerHandler.go 108")
+ kernelDetails := agentUtil.ExecComand("cat /etc/*-release", "ServerHandler.go 114")
  kernelDetails = stringUtil.FindKey(kernelDetails)
 
 

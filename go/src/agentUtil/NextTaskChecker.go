@@ -32,19 +32,19 @@ func hitApi() string{
 
     res, err := http.Get(apiUrl_activity)
     if err != nil {
-        fileUtil.WriteIntoLogFile("Error at NextTaskChecker.hitApi(). LN 119. Msg = : "+err.Error())
+        fileUtil.WriteIntoLogFile("Error at NextTaskChecker.hitApi(). LN 35. Msg = : "+err.Error())
         return "1"
     }
     body, err := ioutil.ReadAll(res.Body)
     if err != nil {
-      fileUtil.WriteIntoLogFile("Error at NextTaskChecker.hitApi(). LN. 124. Msg = : "+err.Error())
+      fileUtil.WriteIntoLogFile("Error at NextTaskChecker.hitApi(). LN. 40. Msg = : "+err.Error())
       return "1"
     }
      
     var data []interface{}
     err = json.Unmarshal(body, &data)
     if err != nil {
-        fileUtil.WriteIntoLogFile("Error at NextTaskChecker.hitApi(). LN 130. Msg = : "+err.Error())
+        fileUtil.WriteIntoLogFile("Error at NextTaskChecker.hitApi(). LN 47. Msg = : "+err.Error())
         return "1"
     }
     fmt.Println(data)
@@ -308,11 +308,6 @@ func checkActivityNameSequence() bool{
        }
      }
      
-
-
-
-
-
 
   }//I
  return true

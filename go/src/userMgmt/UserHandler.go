@@ -190,7 +190,7 @@ func ProcessToChangePrivilege(usrName, privType string) string{
 
 
 func isUserExist(usrName string) bool{
-  status := agentUtil.ExecComand("id "+usrName, "UserHandler.AddUser() L28");
+  status := agentUtil.ExecComand("id "+usrName, "UserHandler.isUserExist() L193");
   fmt.Println("33. UserHandler.AddUser()  status = : ", status)
 
      /* status ='fail' specify error,  'id usrLoginName' returns error due to absence of user existence
@@ -291,7 +291,8 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
 
      if(activityName == "lockDownServer"){
       
-        responseUrl := "https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent"
+        responseUrl := "https://h80y20gh11.execute-api.us-west-2.amazonaws.com/dev/serverlockeddown"
+        //responseUrl := "https://h80y20gh11.execute-api.us-west-2.amazonaws.com/dev/serverlockeddown?id=5&serverIp=172.31.15.1&status=0"
         status := ""
         var userList []string 
         values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
@@ -319,13 +320,11 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
               continue;
             }
 
-
-            fmt.Println("Going to expire this user account, userName = : ",userName)
            /*
-             disallow peter from logging in --> sudo usermod --expiredate 1 userName
-             set expiration date of peter to Never :- sudo usermod --expiredate "" userName
+             disallow userName from logging in --> sudo usermod --expiredate 1 userName
+             set expiration date of userName to Never :- sudo usermod --expiredate "" userName
            */
-            status = agentUtil.ExecComand("sudo usermod --expiredate 1 "+ userName, "UserHandler.lockDownServer() L326")
+            status = agentUtil.ExecComand("usermod --expiredate 1 "+ userName, "UserHandler.lockDownServer() L326")
             fmt.Println("status to lock user = : ",status)
 
             msg :=  "Locking status of user =: "+userName +" is "+status
@@ -337,8 +336,6 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
         fmt.Println("334. UserAccountController status lockDownServer  = : ", status) 
         return callerLoopCntr
     }
-
-
     return callerLoopCntr
 
   }//UserAccountController
