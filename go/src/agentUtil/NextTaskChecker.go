@@ -61,16 +61,11 @@ func hitApi() string{
 func GetNextWork() ([]string){
 	  
   for i := 0; i < 10; i++ {
-    //var infraGuardResponse []string
     respStatus := hitApi();
     if(respStatus == "0"){
      
       isValidData := ValidateArray()
       msg := "NULL"
-     /* if(len(array) > 0){
-         msg = "\n************ Is server responses valid data =  "+strconv.FormatBool(isValidData) +" ***********************\n"
-         fileUtil.WriteIntoLogFile(msg)
-      }*/
      
       if(isValidData){
         fmt.Println(msg)

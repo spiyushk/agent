@@ -290,8 +290,8 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
     */
 
      if(activityName == "lockDownServer"){
-      // serverUrl
-        //responseUrl := "https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent"
+      
+        responseUrl := "https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent"
         status := ""
         var userList []string 
         values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
@@ -299,27 +299,28 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
           userList = stringUtil.SplitData(values[1], ",") 
           fmt.Println("userList from api = : ", userList)
 
-          userList = getUserList() 
+          //userList = getUserList() 
           values = stringUtil.SplitData(nextWork[callerLoopCntr+2], agentUtil.Delimiter)
           id = values[1]
         }
       
        
         fmt.Println("Going to lock Down Server. Deletable users are = : ",userList)
-        fileUtil.WriteIntoLogFile("Going to lock Down Server. Deletable users are = : "+strings.Join(userList,","))
-
-
-        // Below variable is used to send information about the user which is not lock for any reason.
-        unableToLockUserList := "" //notDeletedUser
-        
+        fileUtil.WriteIntoLogFile("Going to lock Down Server. Following users going to lock = : "+strings.Join(userList,","))
+       
         // Below callerLoopCntr is used to control the loop iteration in caller function.
         callerLoopCntr += 2
 
         for j := 0; j < len(userList); j++{
             userName = userList[j]
-            fmt.Println("Going to expire user account, name = : ",userName)
 
-           
+             // To stop accidental lock down from local host 
+            if(strings.Contains(userName, "piyush")){
+              continue;
+            }
+
+
+            fmt.Println("Going to expire this user account, userName = : ",userName)
            /*
              disallow peter from logging in --> sudo usermod --expiredate 1 userName
              set expiration date of peter to Never :- sudo usermod --expiredate "" userName
@@ -330,22 +331,9 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
             msg :=  "Locking status of user =: "+userName +" is "+status
             fmt.Println(msg)
             fileUtil.WriteIntoLogFile(msg)
-
-            if(status != "success"){
-              unableToLockUserList = unableToLockUserList + userName + ","
-            }
          }
 
-         //Truncate last comma ','
-         if(strings.Contains(unableToLockUserList, ",")){
-            unableToLockUserList = unableToLockUserList[0:len(unableToLockUserList)-1]
-         }else{
-            // if all listed user deleted, then pass response as 'ok'
-            unableToLockUserList = ""
-         }
-        fmt.Println("324. unableToLockUserList = : ", unableToLockUserList)
-
-        //agentUtil.SendExecutionStatus(responseUrl, status , id, unableToLockUserList) 
+        agentUtil.SendExecutionStatus(responseUrl, status , id) 
         fmt.Println("334. UserAccountController status lockDownServer  = : ", status) 
         return callerLoopCntr
     }
@@ -356,10 +344,10 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
   }//UserAccountController
 
   
-  func getUserList()([]string){
+  /*func getUserList()([]string){
    // b := [5]string{"tecmint","testUser","rajeevSir1","rajeevSir2", "sadfsdfsdf"}
      users := []string{"rajeevSir2"}
      return users
-  }
+  }*/
 
   

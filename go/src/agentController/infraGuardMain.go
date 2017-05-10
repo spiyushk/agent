@@ -6,7 +6,7 @@ import (
     
   
     "stringUtil"
-    //"serverMgmt"
+    "serverMgmt"
     "fmt"
     "fileUtil"
     "userMgmt"
@@ -22,13 +22,12 @@ var freqToHitApi_InSeconds uint64 = 20
 
 func main() {
   fmt.Println("InfraGuard.main()") 
-  //respStr :=serverMgmt.DoServerRegnProcess()
-  respStr := "0"
+  respStr :=serverMgmt.DoServerRegnProcess()
+  //respStr="0"
   if(respStr =="0"){
     fileUtil.WriteIntoLogFile("InfraGuard.main(). Server Regn process executed successfully")
     fmt.Printf("\nServer Regn process executed successfully. Agent next job will be fire on every 20 seconds. Waiting \n")
     fileUtil.WriteIntoLogFile("---------- Agent next job will be fire on every 20 seconds. Waiting  -------------")
-    
     scheduleAgentjob()
    
   }else{
@@ -53,10 +52,7 @@ func seekNextWork(){
   var values [] string
   var cntr int 
   for i := 0; i < len(nextWork); i++{
-   
-  
     values = stringUtil.SplitData(nextWork[i], agentUtil.Delimiter)
-
     if(values[1] == "addUser" || values[1] == "deleteUser" || 
           values[1] == "changePrivilege" || values[1] == "lockDownServer"){
       cntr = i

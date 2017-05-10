@@ -32,7 +32,7 @@ func ExecComand(cmd, fromFile string) string {
     return execStatus
 }
 
-
+    
  func SendExecutionStatus(serverUrl string, status string, id string, param ... string) string{
 
    serverIp := ExecComand("hostname --all-ip-addresses", "ServerHandler.go 74")
@@ -52,9 +52,7 @@ func ExecComand(cmd, fromFile string) string {
 
   serverUrl = serverUrl + qryStr
   serverUrl = strings.Replace(serverUrl, "\n","",-1)
-  //status = agentUtil.HitAnyUrl(serverUrl)
-
-
+ 
   /*
     Send execution status [success or fail] 
   */
