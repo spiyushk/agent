@@ -11,6 +11,8 @@ import (
     "fileUtil"
   _ "fmt" // for unused variable issue
     "io/ioutil"
+    "fmt"
+    
     //"fmt"    
 )
 
@@ -19,8 +21,13 @@ import (
 
 const baseUrl = "https://ojf489mkrc.execute-api.us-west-2.amazonaws.com/dev/registerserver"
 func DoServerRegnProcess() (string){
+
+ 
+  
     url := baseUrl + getQueryString()
+    fmt.Println("\n\nServer full url for regn = : ",url) 
     fileUtil.WriteIntoLogFile("ServerHandler.DoServerRegnProcess(). Going to hit url = : "+url)
+
 
     res, err := http.Get(url)
     if err != nil {
@@ -28,6 +35,7 @@ func DoServerRegnProcess() (string){
         return "1"
     }
     body, err := ioutil.ReadAll(res.Body)
+    
     if err != nil {
       fileUtil.WriteIntoLogFile("Error at ServerHandler.DoServerRegnProcess(). LN. 32. Msg = : "+err.Error())
       return "1"
@@ -60,7 +68,6 @@ func DoServerRegnProcess() (string){
 }
 
 
-
 func getQueryString()(string){
    serverIp := agentUtil.ExecComand("hostname --all-ip-addresses", "ServerHandler.go 74")
    hostName := agentUtil.ExecComand("hostname", "ServerHandler.go 75")
@@ -87,15 +94,21 @@ func getQueryString()(string){
  
   }
  users = strings.TrimSpace(users)
+ 
+ // Remove last Comma
+ if(strings.Contains(users, ",")){
+     users = string(users[0:(len(users)-1)])
+  }
 
  /*
     Read Command line arguments given at the time of agentInstaller.sh execution
  */
  //var sName, pId, licenseKey string
  var sName, pId, licenseKey string
- sName = "notGiven"
- pId = "notGiven"
- licenseKey = ""
+ 
+ sName = "sName"
+ pId = "5"
+ licenseKey = "lKey"
 
  if(fileUtil.IsFileExisted("/tmp/serverInfo.txt")){
   args := stringUtil.SplitData(fileUtil.ReadFile("/tmp/serverInfo.txt", false), ":")
@@ -119,9 +132,5 @@ func getQueryString()(string){
  qryStr = strings.Replace(qryStr, "\n","",-1)
  return qryStr
 }
-
-
-
-
 
 
