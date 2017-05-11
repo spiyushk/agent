@@ -23,7 +23,6 @@ func ExecComand(cmd, fromFile string) string {
         fileUtil.WriteIntoLogFile(errorMsg)
         execStatus = "fail"
         fmt.Println("34. AgentUtil.ExecComand()  errorMsg = : ", errorMsg)
-
     }
 
     if (len(string(cmdStatus)) > 0){
@@ -31,10 +30,8 @@ func ExecComand(cmd, fromFile string) string {
     }
     return execStatus
 }
-
-    
+   
  func SendExecutionStatus(serverUrl string, status string, id string, param ... string) string{
-
    serverIp := ExecComand("hostname --all-ip-addresses", "AgentUtil.SendExecutionStatus.go 38")
    serverIp = strings.TrimSpace(serverIp)
   

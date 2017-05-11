@@ -161,12 +161,10 @@ func initializeArray(key, val string){
 }
 
 func printArray(){
-  fmt.Println("Agent has below works")
+ 
   fileUtil.WriteIntoLogFile("")
-  fileUtil.WriteIntoLogFile("")
-  fileUtil.WriteIntoLogFile("Agent has below works")
   if(len(array) > 0 ){
-   
+   fileUtil.WriteIntoLogFile("Agent has below works")
     for i := 0; i < len(array); i++ {
       val := array[i]
       fmt.Println(val)
@@ -175,6 +173,8 @@ func printArray(){
     fmt.Println("\n--------------------End -------------------") 
     fileUtil.WriteIntoLogFile("")
     
+  }else{
+     fileUtil.WriteIntoLogFile("Agent has no new task.")
   }
   
   
