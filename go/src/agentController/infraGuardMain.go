@@ -19,7 +19,6 @@ import (
 
 var freqToHitApi_InSeconds uint64 = 20
 
-
 func main() {
   fmt.Println("InfraGuard.main()") 
   respStr :=serverMgmt.DoServerRegnProcess()
