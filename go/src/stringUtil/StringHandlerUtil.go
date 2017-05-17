@@ -5,13 +5,17 @@ package stringUtil
 import (
   _ "fmt" // for unused variable issue
     "strings"
-    "crypto/rand"
-    "fmt"
+    //"crypto/rand"
+    "math/rand"
+    "time"
+
+   // "fmt"
+   // "math/rand"
    // "strconv"
 )
-
-const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
+const zigZagWords = "abcdeFGHijkLMNOpqrstuvwXYZ0123456789"
+//const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+var r *rand.Rand 
 
 func SplitData(data, delim string)([]string){
    data = strings.TrimSpace(data)
@@ -73,17 +77,18 @@ func FindKey(info string)(string){
    val = strings.Replace(val, "\"", "", -1)
    return val;
 }
-
-func RandStringBytes(n int) string {
-    //n := 5
-    b := make([]byte, n)
-    if _, err := rand.Read(b); err != nil {
-        panic(err)
-    }
-    s := fmt.Sprintf("%X", b)
-    fmt.Println("StringHandlerUtil.Random No. = : ",s)
-    return s;
+func init() {
+  r = rand.New(rand.NewSource(time.Now().UnixNano()))
 }
+
+func GetRandomString(strlen int) string {
+  result := make([]byte, strlen)
+  for i := range result {
+    result[i] = zigZagWords[r.Intn(len(zigZagWords))]
+  }
+  return string(result)
+}
+
 
 func RemoveSymplos(word string, symbols... string)(string){
     for _, v := range symbols {

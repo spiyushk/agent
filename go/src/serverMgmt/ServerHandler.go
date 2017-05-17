@@ -79,7 +79,7 @@ func getQueryString()(string){
    userList2 := strings.Split(userList,"\n")
 
   
-   max := 5
+   max := 500
    if(len(userList2) < max){
     max = len(userList2)
    }

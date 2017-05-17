@@ -37,8 +37,12 @@ func ExecComand(cmd, fromFile string) string {
   
 
   qryStr := "?serverIp="+serverIp+"&id="+id
-  if(len(param) >= 1){
+  if(len(param) == 1){
     qryStr = qryStr + "&userName="+ param[0]
+  }
+
+  if(len(param) == 2){
+    qryStr = qryStr + "&pwd="+ param[1]
   }
   
   if(status == "success"){
