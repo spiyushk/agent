@@ -171,7 +171,14 @@ if [ $# -ne 3 ] ; then
 fi
 
 
+pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
+#pId=ps -ef | grep infraGuardMain | awk '{ printf $2 }'
+echo "infraGuardMain pid = : $pId"
 
+pId=$(ps -ef | grep 'fakeProcess' | grep -v 'grep' | awk '{ printf $2 }')
+echo "fakeProcess pid = : $pId"
+
+return
 
 checkUserPrivileges
 # Read arguments, it will saved into /tmp/serverInfo.txt & then serverMgmt/ServerHandler.go will read.
