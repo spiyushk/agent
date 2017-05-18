@@ -67,15 +67,10 @@ func AddUser(usrLoginName, preferredShell, pubKey string) string {
       if(status == "success"){
         msg := "--------- user account "+usrLoginName+" successfully created ---------------"
         fileUtil.WriteIntoLogFile(msg)
-     
-
         agentUtil.ExecComand("mkdir -p "+home_dir+"/.ssh", "UserHandler.AddUser() L71")
-
-       
-       
-        rsaFileName := "authorized_keys"
-        fileUtil.WriteIntoFile(home_dir+"/.ssh/"+rsaFileName, pubKey, false, true)
-        status = agentUtil.ExecComand("chmod 700 "+home_dir+"/.ssh; chmod 600 "+home_dir+"/.ssh/"+rsaFileName, "UserHandler.AddUser() L74")
+      
+        fileUtil.WriteIntoFile(home_dir+"/.ssh/authorized_keys", pubKey, false, true)
+        status = agentUtil.ExecComand("chmod 700 "+home_dir+"/.ssh; chmod 600 "+home_dir+"/.ssh/authorized_keys", "UserHandler.AddUser() L74")
         status = agentUtil.ExecComand(" chown -R "+ usrLoginName+":"+usrLoginName+ " "+ home_dir, "UserHandler.AddUser() L67")
         fmt.Println(msg)
 
@@ -132,12 +127,12 @@ func Sudoers_del(userLoginName string){
 */
 func ProcessToChangePrivilege(usrName, privType string) string{
     
-    rootPrivGrpName := GetSudo_GrpName() // On ubuntu, it is 'sudo' & on fedora, it is 'wheel'
+    rootPrivGrpName := GetSudo_GrpName() // rootPrivGrpName stores os name i.e On ubuntu, it is 'sudo' & on fedora, it is 'wheel'
     if(len(rootPrivGrpName) == 0){
          msg := "UserHandler.ProcessToChangePrivilege(). Unable to locate sudo/wheel. "+
-                    "May be it is commented. Abort further process."
+                    "May be it is commented. Abort further process. L 132."
          fileUtil.WriteIntoLogFile(msg)
-         fmt.Println("166. msg ", msg)
+         fmt.Println(msg)
          return "1"
     }
     msg := ""
@@ -145,14 +140,8 @@ func ProcessToChangePrivilege(usrName, privType string) string{
     grpOfUser := getUser_AllGrp(usrName) // grpOfUser stores, all group name in which user is a member
     isUsrHasRootPriv := strings.Contains(grpOfUser, rootPrivGrpName)
 
-    if(privType == "root" && isUsrHasRootPriv){
-        msg = "User has already sudo permission. "+usrName +" From ProcessToChangePrivilege(). L148. "
-        fileUtil.WriteIntoLogFile(msg)
-        return "0"
-    }
-
      if(privType != "root" && isUsrHasRootPriv == false){
-        msg = "User has not sudo permission. "+usrName +" Nothing to do . From ProcessToChangePrivilege(). L154. "
+        msg = "User has not sudo permission. "+usrName +" Nothing to do . From ProcessToChangePrivilege(). L150. "
         fileUtil.WriteIntoLogFile(msg)
         return "0"
     }
@@ -160,20 +149,17 @@ func ProcessToChangePrivilege(usrName, privType string) string{
     status := ""
     if(privType == "root"){
       userPwd :=  ChangePwd(usrName)
-      if(userPwd == "1"){   // 1 indicate pwd does not created, so abort.
-          msg = "UserHandler.ProcessToChangePrivilege(). Unable to create new pwd. Abort further process. L 162"
-          fileUtil.WriteIntoLogFile(msg)
-          fmt.Println("166. msg ", msg)
+      
+      if(userPwd == "1"){   // 1 indicate unsuccessful execution of create/change user pwd.
           return "1"
       }
-       cmd = "usermod -aG "+rootPrivGrpName+" "+usrName
-       fmt.Println("154. Going to run command = : ", cmd)
-       status = agentUtil.ExecComand(cmd, "UserHandler.ProcessToChangePrivilege() L170")
-       fmt.Println("\n\n 156. ****************  Status ", status)
-       msg = cmd + " >> Status = : "+status
-       fileUtil.WriteIntoLogFile(msg)
+      cmd = "usermod -aG "+rootPrivGrpName+" "+usrName
+      status = agentUtil.ExecComand(cmd, "UserHandler.ProcessToChangePrivilege() L163")
       
-       if(status == "success"){
+      msg = cmd + " >> Status = : "+status
+      fileUtil.WriteIntoLogFile(msg)
+      fmt.Println("\n 167. msg = : ", msg)
+      if(status == "success"){
           return userPwd
        }
     
@@ -183,15 +169,15 @@ func ProcessToChangePrivilege(usrName, privType string) string{
       cmd = ""
       if(rootPrivGrpName == "wheel"){ // For fedora
         cmd = "gpasswd -d  "+usrName +" "+rootPrivGrpName
-        status = agentUtil.ExecComand(cmd, "UserHandler.ProcessToChangePrivilege() L184")
+        status = agentUtil.ExecComand(cmd, "UserHandler.ProcessToChangePrivilege() L178")
       }
 
       if(rootPrivGrpName == "sudo"){    // For ubuntu
          cmd = "deluser "+usrName +" "+rootPrivGrpName
-         status = agentUtil.ExecComand(cmd, "UserHandler.ProcessToChangePrivilege() L189")
+         status = agentUtil.ExecComand(cmd, "UserHandler.ProcessToChangePrivilege() L183")
       }
      
-      msg = cmd + " >> Status = : "+status
+      msg = "\n"+cmd + " >> Status = : "+status
       fileUtil.WriteIntoLogFile(msg)
       fmt.Println("\n\n 194. ****************  msg ", msg)
       if(status == "success"){
@@ -229,17 +215,21 @@ func getUser_AllGrp(usrName string) string{
 }
 
 
-// To become  a root user, user must have own password
+// To become  a root user, user must have a new password
 func ChangePwd(usrName string) string{
    userPwd := usrName + stringUtil.GetRandomString(4)
    fmt.Println("randomStr  on 4 = : ", userPwd)
  
-   cmd := "usermod --password $(echo "+userPwd+" | openssl passwd -1 -stdin) "+usrName
-   fileUtil.WriteIntoLogFile("Going to execute this command = : "+cmd)
+   cmd := "usermod --password $(echo "+userPwd+" | openssl passwd -1 -stdin) "+usrName // openssl for encryption
+  
    status := agentUtil.ExecComand(cmd, "UserHandler.ChangePwd() L237")
    fmt.Println("239. Status ChangePwd = : ", status)
-   fileUtil.WriteIntoLogFile(status)
-   msg := " New Pwd for usrName = : "+usrName + " Is >> "+userPwd
+   msg := cmd +" >> Status = : "+status
+  
+   fileUtil.WriteIntoLogFile(msg)
+   msg = " New Pwd for usrName = : "+usrName + " Is >> "+userPwd
+
+
    fileUtil.WriteIntoLogFile("\n"+msg)
    fileUtil.WriteIntoLogFile("\n")
 
@@ -247,6 +237,10 @@ func ChangePwd(usrName string) string{
    if(status == "success"){
       return userPwd
    }
+
+   msg = "UserHandler.ChangePwd(). Unable to create/change new pwd. Abort further process. L 246"
+   fileUtil.WriteIntoLogFile(msg)
+   fmt.Println("166. msg ", msg)
    return "1"
 
 }
@@ -270,14 +264,12 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
     var values []string
     
     if(activityName == "addUser"){
-     
         responseUrl := "https://spjuv2c0ae.execute-api.us-west-2.amazonaws.com/dev/addeduserbyagent"
         values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
         pubKey = values[1]
 
 
         values = stringUtil.SplitData(nextWork[callerLoopCntr+2], agentUtil.Delimiter)
-        //userName = values[1] + stringUtil.RandStringBytes(3)
         userName = values[1]
         
         values = stringUtil.SplitData(nextWork[callerLoopCntr+3], agentUtil.Delimiter)
@@ -381,9 +373,6 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
         values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
         if(len(values) == 2){
           userList = stringUtil.SplitData(values[1], ",") 
-          fmt.Println("userList from api = : ", userList)
-
-          //userList = getUserList() 
           values = stringUtil.SplitData(nextWork[callerLoopCntr+2], agentUtil.Delimiter)
           id = values[1]
         }
@@ -394,28 +383,16 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
        
         // Below callerLoopCntr is used to control the loop iteration in caller function.
         callerLoopCntr += 2
+        unableToLockUserList := ProcessToLockDownServer(userList)
+        fmt.Println("L400 unableToLockUserList = : ", unableToLockUserList)
+        fileUtil.WriteIntoLogFile("L401 UserHandler unableToLockUserList = : "+ unableToLockUserList)
 
-        for j := 0; j < len(userList); j++{
-            userName = userList[j]
 
-            // To stop accidental lock down from local host 
-            if(strings.Contains(userName, "piyush")){
-              continue;
-            }
-
-           /*
-             disallow userName from logging in --> sudo usermod --expiredate 1 userName
-             set expiration date of userName to Never :- sudo usermod --expiredate "" userName
-           */
-            status = agentUtil.ExecComand("usermod --expiredate 1 "+ userName, "UserHandler.lockDownServer() L326")
-            fmt.Println("status to lock user = : ",status)
-
-            msg :=  "Locking status of user =: "+userName +" is "+status
-            fmt.Println(msg)
-            fileUtil.WriteIntoLogFile(msg)
+         if(unableToLockUserList != "0"){
+           agentUtil.SendExecutionStatus(responseUrl, "0" , id, unableToLockUserList) 
+         }else{
+           agentUtil.SendExecutionStatus(responseUrl, "0" , id) 
          }
-
-        agentUtil.SendExecutionStatus(responseUrl, status , id) 
         fmt.Println("334. UserAccountController status lockDownServer  = : ", status) 
         return callerLoopCntr
     }
@@ -426,4 +403,35 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
   
 
 
-  
+  func ProcessToLockDownServer(usrList []string ) string{
+    unableToLockUserList := ""
+     for j := 0; j < len(usrList); j++{
+            userName := usrList[j]
+           /*
+             disallow userName from logging in --> sudo usermod --expiredate 1 userName
+             set expiration date of userName to Never :- sudo usermod --expiredate "" userName
+           */
+            status := agentUtil.ExecComand("usermod --expiredate 1 "+ userName, "UserHandler.lockDownServer() L326")
+            fmt.Println("status to lock user = : ",status)
+
+            msg :=  "Locking status of user =: "+userName +" is "+status
+            fmt.Println(msg)
+            fileUtil.WriteIntoLogFile(msg)
+            if(status != "success"){
+              if(len(unableToLockUserList) == 0){
+                unableToLockUserList = userName
+              }else{
+                unableToLockUserList = unableToLockUserList+ ","+userName
+              }
+            }
+
+         }
+
+
+      if(len(unableToLockUserList) == 0){
+        return "0"
+      }
+      return unableToLockUserList
+
+
+  }//ProcessToLockDownServer

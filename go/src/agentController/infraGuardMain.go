@@ -3,8 +3,6 @@
 package main
 // version No 2 dated :- 10-May-2017
 import (
-    
-  
     "stringUtil"
     "serverMgmt"
     "fmt"
@@ -35,7 +33,6 @@ func main() {
     return
   }
 }//main
-
 
 
 func scheduleAgentjob(){
@@ -74,12 +71,3 @@ func seekNextWork(){
 func isAlive(){
   fileUtil.WriteIntoLogFile(" -------  Infraguard agent code is still running. Next log will be after 1 Hr.... -------")
 }
-
-
-
-
-
-
-
-
-
