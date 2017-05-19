@@ -30,8 +30,48 @@ func ExecComand(cmd, fromFile string) string {
     }
     return execStatus
 }
-   
- func SendExecutionStatus(serverUrl string, status string, id string, param ... string) string{
+  
+  func SendExecutionStatus(serverUrl string, status string, id, localQryStr string) string{
+   serverIp := ExecComand("hostname --all-ip-addresses", "AgentUtil.SendExecutionStatus.go 38")
+   serverIp = strings.TrimSpace(serverIp)
+  
+
+  qryStr := "?serverIp="+serverIp+"&id="+id
+
+  if(status == "success" || status == "0"){
+    qryStr = qryStr + "&status=0"
+  }else{
+    qryStr = qryStr + "&status=1"
+  }
+
+  serverUrl = serverUrl + qryStr+localQryStr
+  serverUrl = strings.Replace(serverUrl, "\n","",-1)
+ 
+  
+   // Send execution status [success or fail] 
+  
+  res, err := http.Get(serverUrl)
+  if err != nil {
+      fileUtil.WriteIntoLogFile("Error at AgentUtil.sendExecutionStatus(). LN 61. Msg = : "+err.Error())
+      status =  "1"
+  }
+  _, error := ioutil.ReadAll(res.Body)
+  if error != nil {
+    fileUtil.WriteIntoLogFile("Error at AgentUtil.sendExecutionStatus(). LN 66. Msg = : "+error.Error())
+    status =  "1"
+  }
+
+  fileUtil.WriteIntoLogFile("Successfully sent execution status to this url = : "+serverUrl)
+  fmt.Println("Successfully sent execution status to this url = : ",serverUrl) //success
+  status =  "0"
+
+
+  return status
+
+}//sendExecutionStatus
+
+ 
+ /*func SendExecutionStatus(serverUrl string, status string, id string, param ... string) string{
    serverIp := ExecComand("hostname --all-ip-addresses", "AgentUtil.SendExecutionStatus.go 38")
    serverIp = strings.TrimSpace(serverIp)
   
@@ -54,9 +94,9 @@ func ExecComand(cmd, fromFile string) string {
   serverUrl = serverUrl + qryStr
   serverUrl = strings.Replace(serverUrl, "\n","",-1)
  
-  /*
-    Send execution status [success or fail] 
-  */
+  
+   // Send execution status [success or fail] 
+  
   res, err := http.Get(serverUrl)
   if err != nil {
       fileUtil.WriteIntoLogFile("Error at AgentUtil.sendExecutionStatus(). LN 61. Msg = : "+err.Error())
@@ -76,5 +116,5 @@ func ExecComand(cmd, fromFile string) string {
   return status
 
 }//sendExecutionStatus
-
+*/
 
