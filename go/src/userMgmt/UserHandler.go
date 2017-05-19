@@ -284,7 +284,8 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
         fileUtil.WriteIntoLogFile(msg)
         status := AddUser(userName, prefShell, pubKey ) 
        
-        agentUtil.SendExecutionStatus(responseUrl, status , id, userName)
+       qryString := "userName="+userName
+       agentUtil.SendExecutionStatus(responseUrl, status , id, qryString)
       
         callerLoopCntr += 4
         return callerLoopCntr
@@ -305,7 +306,9 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
 
         status := Userdel(userName, false)
         fmt.Println("status deleteUser  = : ", status)
-        agentUtil.SendExecutionStatus(responseUrl, status , id, userName)
+
+        qryString := "userName="+userName
+        agentUtil.SendExecutionStatus(responseUrl, status , id, qryString)
         callerLoopCntr += 2
         return callerLoopCntr
     }
@@ -349,12 +352,17 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
 
 
         if(len(status) > 4){
-            usrNewPwd := status
-            agentUtil.SendExecutionStatus(responseUrl, "0" , id, userName, usrNewPwd) 
+            qryString := "userName="+userName+"&privilege=root&password="+status
+            agentUtil.SendExecutionStatus(responseUrl, "0" , id, qryString) 
         }else{
-            agentUtil.SendExecutionStatus(responseUrl, status , id, userName) 
+            qryString := "userName="+userName+"&privilege=normal";
+            agentUtil.SendExecutionStatus(responseUrl, status , id, qryString) 
         }
-      
+      /*
+      https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent?
+      id=9&userName=vinyl&privilege=root&status=0&password=qee!@#123&serverIp=172.31.15.1
+*/
+// responseUrl := "https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent"
         callerLoopCntr += 3
         return callerLoopCntr
     }
@@ -376,6 +384,7 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
           values = stringUtil.SplitData(nextWork[callerLoopCntr+2], agentUtil.Delimiter)
           id = values[1]
         }
+        //lopa ,1000 hai ?
       
        
         fmt.Println("Going to lock Down Server. Deletable users are = : ",userList)
@@ -389,9 +398,10 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
 
 
          if(unableToLockUserList != "0"){
-           agentUtil.SendExecutionStatus(responseUrl, "0" , id, unableToLockUserList) 
+           qryString := "aliveAccount="+unableToLockUserList
+           agentUtil.SendExecutionStatus(responseUrl, "0" , id, qryString) 
          }else{
-           agentUtil.SendExecutionStatus(responseUrl, "0" , id) 
+           agentUtil.SendExecutionStatus(responseUrl, "0" , id, "") 
          }
         fmt.Println("334. UserAccountController status lockDownServer  = : ", status) 
         return callerLoopCntr
@@ -410,6 +420,8 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
            /*
              disallow userName from logging in --> sudo usermod --expiredate 1 userName
              set expiration date of userName to Never :- sudo usermod --expiredate "" userName
+
+             chage -l userNameHere
            */
             status := agentUtil.ExecComand("usermod --expiredate 1 "+ userName, "UserHandler.lockDownServer() L326")
             fmt.Println("status to lock user = : ",status)
