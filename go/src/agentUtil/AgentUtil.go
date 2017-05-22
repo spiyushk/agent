@@ -43,7 +43,9 @@ func ExecComand(cmd, fromFile string) string {
   }else{
     qryStr = qryStr + "&status=1"
   }
-
+  if(len(localQryStr) > 0){
+    localQryStr = "?"+localQryStr
+  }
   serverUrl = serverUrl + qryStr+localQryStr
   serverUrl = strings.Replace(serverUrl, "\n","",-1)
  
@@ -52,7 +54,8 @@ func ExecComand(cmd, fromFile string) string {
   
   res, err := http.Get(serverUrl)
   if err != nil {
-      fileUtil.WriteIntoLogFile("Error at AgentUtil.sendExecutionStatus(). LN 61. Msg = : "+err.Error())
+      fileUtil.WriteIntoLogFile("AgentUtil.sendExecutionStatus() L 57. Error while process this url - serverUrl = : "+serverUrl)
+      fileUtil.WriteIntoLogFile("Error at AgentUtil.sendExecutionStatus(). LN 58. Msg = : "+err.Error())
       status =  "1"
   }
   _, error := ioutil.ReadAll(res.Body)
