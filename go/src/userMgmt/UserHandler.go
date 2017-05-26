@@ -258,13 +258,13 @@ func isUserExist(usrName string) bool{
     return true;
 }
 
-// i
+
 func UserAccountController(activityName string, nextWork []string, callerLoopCntr int) (int){
     var pubKey, userName, prefShell, privilege, id string
     var values []string
     
     if(activityName == "addUser"){
-        responseUrl := "https://spjuv2c0ae.execute-api.us-west-2.amazonaws.com/dev/addeduserbyagent"
+        responseUrl := "https://ptj6vnt5z3.execute-api.ap-southeast-1.amazonaws.com/prod/addeduserbyagent"
         values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
         pubKey = values[1]
 
@@ -293,7 +293,8 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
     }
 
     if(activityName == "deleteUser"){
-        responseUrl := "https://vglxmaiux1.execute-api.us-west-2.amazonaws.com/dev/deleteduserbyagent"
+        //responseUrl := "https://vglxmaiux1.execute-api.us-west-2.amazonaws.com/dev/deleteduserbyagent"
+        responseUrl := "https://4lqi1ahlk9.execute-api.ap-southeast-1.amazonaws.com/prod/deleteduserbyagent"
         values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
         userName = values[1]
 
@@ -313,8 +314,11 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
         return callerLoopCntr
     }
 
+
+
     if(activityName == "changePrivilege"){
-      responseUrl := "https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent"
+      //responseUrl := "https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent"
+      responseUrl := "https://tutzygcuol.execute-api.ap-southeast-1.amazonaws.com/prod/privilegechangedbyagent"
 
      
       status := ""
@@ -367,6 +371,7 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
         return callerLoopCntr
     }
 
+
     /*
       ----------------------------------  Lock down server -------------------------------------
       Pssible data format is given below
@@ -375,7 +380,8 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
 
      if(activityName == "lockDownServer"){
       
-        responseUrl := "https://h80y20gh11.execute-api.us-west-2.amazonaws.com/dev/serverlockeddown"
+        //responseUrl := "https://h80y20gh11.execute-api.us-west-2.amazonaws.com/dev/serverlockeddown"
+        responseUrl := "https://nk7dwmdhk0.execute-api.ap-southeast-1.amazonaws.com/prod/serverlockeddown"
         status := ""
         var userList []string 
         values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)

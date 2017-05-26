@@ -30,7 +30,7 @@ func ExecComand(cmd, fromFile string) string {
     }
     return execStatus
 }
-  
+
   func SendExecutionStatus(serverUrl string, status string, id, localQryStr string) string{
    serverIp := ExecComand("hostname --all-ip-addresses", "AgentUtil.SendExecutionStatus.go 38")
    serverIp = strings.TrimSpace(serverIp)
@@ -48,7 +48,16 @@ func ExecComand(cmd, fromFile string) string {
   }
   serverUrl = serverUrl + qryStr+localQryStr
   serverUrl = strings.Replace(serverUrl, "\n","",-1)
- 
+ /*
+  Sir,
+  Due to some personal work, a sum of Rs. 15000/- is needed as advance salary.
+  I will repay it in two installment (10000 & 5000) starting from May salary
+
+  I am requesting you, please sanction the same
+
+  Warm regards
+  Piyush
+ */
   
    // Send execution status [success or fail] 
   

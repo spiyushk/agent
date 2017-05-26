@@ -19,7 +19,8 @@ import (
 /*{"fieldCount":0,"affectedRows":1,"insertId":44,
   "serverStatus":2,"warningCount":0,"message":"","protocol41":true,"changedRows":0}*/
 
-const baseUrl = "https://ojf489mkrc.execute-api.us-west-2.amazonaws.com/dev/registerserver"
+//const baseUrl = "https://ojf489mkrc.execute-api.us-west-2.amazonaws.com/dev/registerserver"
+const baseUrl = "https://09q09swczl.execute-api.ap-southeast-1.amazonaws.com/prod/registerserver"  
 func DoServerRegnProcess() (string){
 
  
