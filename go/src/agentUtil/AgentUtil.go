@@ -34,6 +34,7 @@ func ExecComand(cmd, fromFile string) string {
   func SendExecutionStatus(serverUrl string, status string, id, localQryStr string) string{
    serverIp := ExecComand("hostname --all-ip-addresses", "AgentUtil.SendExecutionStatus.go 38")
    serverIp = strings.TrimSpace(serverIp)
+   localQryStr = strings.TrimSpace(localQryStr)
   
 
   qryStr := "?serverIp="+serverIp+"&id="+id
@@ -44,7 +45,7 @@ func ExecComand(cmd, fromFile string) string {
     qryStr = qryStr + "&status=1"
   }
   if(len(localQryStr) > 0){
-    localQryStr = "?"+localQryStr
+    localQryStr = "&"+localQryStr
   }
   serverUrl = serverUrl + qryStr+localQryStr
   serverUrl = strings.Replace(serverUrl, "\n","",-1)
