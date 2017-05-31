@@ -1,0 +1,14 @@
+
+# Instructions for agent
+getInstruction="https://6ywvm6i971.execute-api.ap-southeast-1.amazonaws.com/prod/getinstructionsforagent"
+
+# Url for Server Regn Process
+serverRegn="https://09q09swczl.execute-api.ap-southeast-1.amazonaws.com/prod/registerserver"
+
+# Response Url for different activity. Used when agent finishes their job and return work status
+responseUrl_addUser="https://ptj6vnt5z3.execute-api.ap-southeast-1.amazonaws.com/prod/addeduserbyagent"
+responseUrl_deleteUser="https://4lqi1ahlk9.execute-api.ap-southeast-1.amazonaws.com/prod/deleteduserbyagent"
+responseUrl_changePrivilege="https://tutzygcuol.execute-api.ap-southeast-1.amazonaws.com/prod/privilegechangedbyagent"
+responseUrl_lockDownServer="https://nk7dwmdhk0.execute-api.ap-southeast-1.amazonaws.com/prod/serverlockeddown"
+
+
