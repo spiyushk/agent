@@ -11,7 +11,7 @@ responseUrl_addUser="https://spjuv2c0ae.execute-api.us-west-2.amazonaws.com/dev/
 responseUrl_deleteUser="https://vglxmaiux1.execute-api.us-west-2.amazonaws.com/dev/deleteduserbyagent"
 responseUrl_changePrivilege="https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent"
 responseUrl_lockDownServer="https://h80y20gh11.execute-api.us-west-2.amazonaws.com/dev/serverlockeddown"
-responseUrl_unlockServer="https://s93ahm7o93.execute-api.us-west-2.amazonaws.com/dev/unlockserver?id=5&serverIp=172.31.15.1&status=0"
+responseUrl_unlockServer="https://s93ahm7o93.execute-api.us-west-2.amazonaws.com/dev/unlockserver"
 
 
 
