@@ -1,14 +1,34 @@
+########### This Property file applicable to Testing Server - ip 52.221.15.30 ######################
 
-# Instructions for agent
-getInstruction="https://6ywvm6i971.execute-api.ap-southeast-1.amazonaws.com/prod/getinstructionsforagent"
+#Instructions for agent
+getInstruction="https://xhas8lgghd.execute-api.us-west-2.amazonaws.com/dev/getinstructionsforagent"
 
 # Url for Server Regn Process
-serverRegn="https://09q09swczl.execute-api.ap-southeast-1.amazonaws.com/prod/registerserver"
+serverRegn="https://ojf489mkrc.execute-api.us-west-2.amazonaws.com/dev/registerserver"
 
-# Response Url for different activity. Used when agent finishes their job and return work status
-responseUrl_addUser="https://ptj6vnt5z3.execute-api.ap-southeast-1.amazonaws.com/prod/addeduserbyagent"
-responseUrl_deleteUser="https://4lqi1ahlk9.execute-api.ap-southeast-1.amazonaws.com/prod/deleteduserbyagent"
-responseUrl_changePrivilege="https://tutzygcuol.execute-api.ap-southeast-1.amazonaws.com/prod/privilegechangedbyagent"
-responseUrl_lockDownServer="https://nk7dwmdhk0.execute-api.ap-southeast-1.amazonaws.com/prod/serverlockeddown"
+# Response Url for different activity. Used when agent finishes their job and returns work status
+responseUrl_addUser="https://spjuv2c0ae.execute-api.us-west-2.amazonaws.com/dev/addeduserbyagent"
+responseUrl_deleteUser="https://vglxmaiux1.execute-api.us-west-2.amazonaws.com/dev/deleteduserbyagent"
+responseUrl_changePrivilege="https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent"
+responseUrl_lockDownServer="https://h80y20gh11.execute-api.us-west-2.amazonaws.com/dev/serverlockeddown"
+responseUrl_unlockServer="https://s93ahm7o93.execute-api.us-west-2.amazonaws.com/dev/unlockserver?id=5&serverIp=172.31.15.1&status=0"
 
 
+
+
+
+
+########### This Property file applicable to Server ip 10.0.1.5 ######################
+
+#Instructions for agent
+#getInstruction="https://6ywvm6i971.execute-api.ap-southeast-1.amazonaws.com/prod/getinstructionsforagent"
+
+# Url for Server Regn Process
+#serverRegn="https://09q09swczl.execute-api.ap-southeast-1.amazonaws.com/prod/registerserver"
+
+# Response Url for different activity. Used when agent finishes their job and returns work status
+#responseUrl_addUser="https://ptj6vnt5z3.execute-api.ap-southeast-1.amazonaws.com/prod/addeduserbyagent"
+#responseUrl_deleteUser="https://4lqi1ahlk9.execute-api.ap-southeast-1.amazonaws.com/prod/deleteduserbyagent"
+#responseUrl_changePrivilege="https://tutzygcuol.execute-api.ap-southeast-1.amazonaws.com/prod/privilegechangedbyagent"
+#responseUrl_lockDownServer="https://nk7dwmdhk0.execute-api.ap-southeast-1.amazonaws.com/prod/serverlockeddown"
+#responseUrl_unlockServer="https://s93ahm7o93.execute-api.us-west-2.amazonaws.com/dev/unlockserver?id=5&serverIp=172.31.15.1&status=0"
