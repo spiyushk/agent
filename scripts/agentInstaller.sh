@@ -95,7 +95,7 @@ install_daemon(){
 }
 
 downloadFiles_FromGitHub() {
-    # https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/agentConstants.txt
+    
     echo "Downloading $fileAgentController  > This file will act as a process"
     
     #local url="wget -O /tmp/agent_controller.sh https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agent_controller.sh"
@@ -114,16 +114,27 @@ downloadFiles_FromGitHub() {
     
     echo ""
     echo "Downloading infraGuardMain executable. It will take time. Please wait...."
-
-
-# #######   url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/agentController/infraGuardMain"
-
- url="wget -O /opt/infraguard/sbin/infraGuardMain https://github.com/agentinfraguard/agent/master/go/src/test/infraGuardMain"
+    #url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/agentController/infraGuardMain"
+    
+    url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/test/infraGuardMain"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "infraGuardMain downloaded."
+
    
     command="chmod 777 /opt/infraguard/sbin/infraGuardMain"
     $command
+
+
+    echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
+    echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
+
+    echo "Downloading /opt/infraguard/etc/sudoAdder.sh ..."
+
+    local url="wget -O /opt/infraguard/etc/sudoAdder.sh https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/sudoAdder.sh"
+    wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
+    command="chmod 777 /opt/infraguard/etc/sudoAdder.sh"
+    $command
+
 
 
 
@@ -138,10 +149,8 @@ downloadFiles_FromGitHub() {
 
 
 
-    echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
-    echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
 
-   
+
 
      if [[ "$os" = "debian"  || "$os" = "ubuntu" ]] ;then
             echo " ------- going to call  update-rc.d for agent_controller.sh --------"
