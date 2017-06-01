@@ -31,4 +31,4 @@ responseUrl_unlockServer="https://s93ahm7o93.execute-api.us-west-2.amazonaws.com
 #responseUrl_deleteUser="https://4lqi1ahlk9.execute-api.ap-southeast-1.amazonaws.com/prod/deleteduserbyagent"
 #responseUrl_changePrivilege="https://tutzygcuol.execute-api.ap-southeast-1.amazonaws.com/prod/privilegechangedbyagent"
 #responseUrl_lockDownServer="https://nk7dwmdhk0.execute-api.ap-southeast-1.amazonaws.com/prod/serverlockeddown"
-#responseUrl_unlockServer="https://s93ahm7o93.execute-api.us-west-2.amazonaws.com/dev/unlockserver?id=5&serverIp=172.31.15.1&status=0"
+#responseUrl_unlockServer=""
