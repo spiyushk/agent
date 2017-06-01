@@ -61,21 +61,29 @@ create_InfraGuardDirectories(){
     exec="touch  /var/logs/infraguard/activityLog"
     $exec
 
-    exec="chmod 777 /var/logs/infraguard/activityLog"
+
+    exec="chown root:root /opt/infraguard/sbin"
+    $exec
+    exec="chmod 700 /opt/infraguard/sbin"
     $exec
 
-    exec="chmod 777 /opt/infraguard/sbin"
+
+    exec="chmod 700 /opt/infraguard/etc"
+    $exec
+    exec="chown root:root /opt/infraguard/etc"
     $exec
 
-    exec="chmod 777 /opt/infraguard/etc"
+
+    exec="chmod 700 /var/logs/infraguard"
+    $exec
+    exec="chown root:root /var/logs/infraguard"
     $exec
 
-    exec="chmod 777 /var/logs/infraguard"
-    $exec
-    
     echo "completed Directories Creation"
 
+
 }
+
 
 #sudo chown root:root /path/to/application
 #sudo chmod 700 /path/to/application
@@ -104,9 +112,12 @@ downloadFiles_FromGitHub() {
     $command
       
    
-   
-    command="chmod 777 /etc/init.d/$fileAgentController"
-    $command
+    exec="chown root:root /etc/init.d/$fileAgentController"
+    $exec
+    exec="chmod 700 /etc/init.d/$fileAgentController"
+    $exec
+
+
     
     echo ""
     echo "Downloading infraGuardMain executable. It will take time. Please wait...."
@@ -115,20 +126,12 @@ downloadFiles_FromGitHub() {
     #url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/test/infraGuardMain"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "infraGuardMain downloaded."
-    command="chmod 777 /opt/infraguard/sbin/infraGuardMain"
-    $command
-
-
-    echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
-    echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
-
-    echo "Downloading /opt/infraguard/etc/sudoAdder.sh ..."
-
-    local url="wget -O /opt/infraguard/etc/sudoAdder.sh https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/sudoAdder.sh"
-    wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
-    command="chmod 777 /opt/infraguard/etc/sudoAdder.sh"
-    $command
-
+    
+    
+    exec="chown root:root /opt/infraguard/sbin/infraGuardMain"
+    $exec
+    exec="chmod 700 /opt/infraguard/sbin/infraGuardMain"
+    $exec
 
 
 
@@ -138,9 +141,11 @@ downloadFiles_FromGitHub() {
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "agentConstants.txt downloaded."
    
-    command="chmod 777 /opt/infraguard/etc/agentConstants.txt"
-    $command
 
+    exec="chown root:root /opt/infraguard/etc/agentConstants.txt"
+    $exec
+    exec="chmod 700 /opt/infraguard/etc/agentConstants.txt"
+    $exec
 
 
      if [[ "$os" = "debian"  || "$os" = "ubuntu" ]] ;then
@@ -176,7 +181,6 @@ fi
 
 
 pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
-#pId=ps -ef | grep infraGuardMain | awk '{ printf $2 }'
 echo "infraGuardMain pid = : $pId"
 
 pId=$(ps -ef | grep 'fakeProcess' | grep -v 'grep' | awk '{ printf $2 }')
