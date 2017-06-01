@@ -77,7 +77,8 @@ create_InfraGuardDirectories(){
 
 }
 
-
+#sudo chown root:root /path/to/application
+#sudo chmod 700 /path/to/application
 
 install_daemon(){
     echo 'Attempting Daemon Installation'
@@ -97,30 +98,23 @@ install_daemon(){
 downloadFiles_FromGitHub() {
     
     echo "Downloading $fileAgentController  > This file will act as a process"
-    
-    #local url="wget -O /tmp/agent_controller.sh https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agent_controller.sh"
     local url="wget -O /tmp/$fileAgentController https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/$fileAgentController"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
-    
-    ######command="sudo mv /tmp/agent_controller.sh  /etc/init.d"
-    #command="mv /tmp/agent_controller.sh  /etc/init.d"
     command="mv /tmp/$fileAgentController  /etc/init.d"
     $command
       
    
-    #command="chmod 777 /etc/init.d/agent_controller.sh"
+   
     command="chmod 777 /etc/init.d/$fileAgentController"
     $command
     
     echo ""
     echo "Downloading infraGuardMain executable. It will take time. Please wait...."
-    #url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/agentController/infraGuardMain"
+    url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/agentController/infraGuardMain"
     
-    url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/test/infraGuardMain"
+    #url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/test/infraGuardMain"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "infraGuardMain downloaded."
-
-   
     command="chmod 777 /opt/infraguard/sbin/infraGuardMain"
     $command
 
@@ -149,9 +143,6 @@ downloadFiles_FromGitHub() {
 
 
 
-
-
-
      if [[ "$os" = "debian"  || "$os" = "ubuntu" ]] ;then
             echo " ------- going to call  update-rc.d for agent_controller.sh --------"
             #update-rc.d agent_controller.sh defaults
@@ -168,9 +159,6 @@ downloadFiles_FromGitHub() {
     export command="/etc/init.d/$fileAgentController"
         
     sh $command ${start}
-    
-
-# bash <(wget -qO- https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agentInstaller.sh) server111 5011 lKey101
    
     }
 
