@@ -63,13 +63,13 @@ create_InfraGuardDirectories(){
 
 
    
-    exec="chmod 700 /opt/infraguard"
+    exec="chmod 700 -R /opt/infraguard"
     $exec
     exec="chown root:root /opt/infraguard"
     $exec
 
 
-    exec="chmod 700 /var/logs/infraguard"
+    exec="chmod 700 -R /var/logs/infraguard"
     $exec
     exec="chown root:root /var/logs/infraguard"
     $exec
