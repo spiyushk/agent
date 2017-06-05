@@ -171,7 +171,7 @@ downloadFiles_FromGitHub() {
     }
 
 
-
+# Check whether agent already is running or not. If yes, then abort further process.
 pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
  echo "infraGuardMain pid = : $pId"
 
@@ -180,7 +180,7 @@ if [ "$pId" -gt 0 ] ; then
     exit 1
 fi
 
-exit 1
+
 
 if [ $# -ne 3 ] ; then
     echo "182. Insufficient arguments. Usage: $0 serverName projectId licenseKey"
