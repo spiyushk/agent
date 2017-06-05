@@ -80,9 +80,6 @@ create_InfraGuardDirectories(){
 }
 
 
-#sudo chown root:root /path/to/application
-#sudo chmod 700 /path/to/application
-
 install_daemon(){
     echo 'Attempting Daemon Installation'
     cd /tmp
