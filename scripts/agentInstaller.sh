@@ -61,35 +61,29 @@ create_InfraGuardDirectories(){
     exec="touch  /var/logs/infraguard/activityLog"
     $exec
 
-    exec="chmod 777 /var/logs/infraguard/activityLog"
+
+    exec="chown root:root /opt/infraguard/sbin"
+    $exec
+    exec="chmod 700 /opt/infraguard/sbin"
     $exec
 
-    exec="chmod 777 /opt/infraguard/sbin"
+
+    exec="chmod 700 /opt/infraguard/etc"
+    $exec
+    exec="chown root:root /opt/infraguard/etc"
     $exec
 
-    exec="chmod 777 /opt/infraguard/etc"
+
+    exec="chmod 700 /var/logs/infraguard"
+    $exec
+    exec="chown root:root /var/logs/infraguard"
     $exec
 
-    exec="chmod 777 /var/logs/infraguard"
-    $exec
-    
     echo "completed Directories Creation"
 
 
-#######################################################################
-
-#######################################################################
-
-
-
-
-
-
-
-
-
-
 }
+
 
 #sudo chown root:root /path/to/application
 #sudo chmod 700 /path/to/application
@@ -118,10 +112,16 @@ downloadFiles_FromGitHub() {
     $command
       
    
-   
-    command="chmod 777 /etc/init.d/$fileAgentController"
-    $command
-    
+    exec="chown root:root /etc/init.d/$fileAgentController"
+    $exec
+    exec="chmod 700 /etc/init.d/$fileAgentController"
+    $exec
+
+
+    echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
+    echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
+
+
     echo ""
     echo "Downloading infraGuardMain executable. It will take time. Please wait...."
     url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/agentController/infraGuardMain"
@@ -129,21 +129,12 @@ downloadFiles_FromGitHub() {
     #url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/test/infraGuardMain"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "infraGuardMain downloaded."
-    command="chmod 777 /opt/infraguard/sbin/infraGuardMain"
-    $command
-
-
-    echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
-    echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
-
-    echo "Downloading /opt/infraguard/etc/sudoAdder.sh ..."
-
-    local url="wget -O /opt/infraguard/etc/sudoAdder.sh https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/sudoAdder.sh"
-    wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
-    command="chmod 777 /opt/infraguard/etc/sudoAdder.sh"
-    $command
-
-
+    
+    
+    exec="chown root:root /opt/infraguard/sbin/infraGuardMain"
+    $exec
+    exec="chmod 700 /opt/infraguard/sbin/infraGuardMain"
+    $exec
 
 
     echo ""
@@ -152,29 +143,30 @@ downloadFiles_FromGitHub() {
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "agentConstants.txt downloaded."
    
-    command="chmod 777 /opt/infraguard/etc/agentConstants.txt"
-    $command
 
+    exec="chown root:root /opt/infraguard/etc/agentConstants.txt"
+    $exec
+    exec="chmod 700 /opt/infraguard/etc/agentConstants.txt"
+    $exec
 
 
      if [[ "$os" = "debian"  || "$os" = "ubuntu" ]] ;then
             echo " ------- going to call  update-rc.d for agent_controller.sh --------"
-            #update-rc.d agent_controller.sh defaults
             update-rc.d $fileAgentController defaults
      else
             echo " ------- going to call  chkconfig for agent_controller.sh --------"
-            #chkconfig --add /etc/init.d/agent_controller.sh       
             chkconfig --add /etc/init.d/$fileAgentController
      fi
 
 
     export start="start"
-    #export command="/etc/init.d/agent_controller.sh"
     export command="/etc/init.d/$fileAgentController"
         
     sh $command ${start}
+
    
-    }
+    } # downloadFiles_FromGitHub
+
 
     checkUserPrivileges(){
         if [ `id -u` -ne 0 ] ; then
@@ -182,6 +174,7 @@ downloadFiles_FromGitHub() {
             exit 1
         fi
     }
+
 
 if [ $# -ne 3 ] ; then
     echo "Insufficient arguments. Usage: $0 serverName projectId licenseKey"
