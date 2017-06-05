@@ -80,6 +80,9 @@ create_InfraGuardDirectories(){
 }
 
 
+#sudo chown root:root /path/to/application
+#sudo chmod 700 /path/to/application
+
 install_daemon(){
     echo 'Attempting Daemon Installation'
     cd /tmp
@@ -168,17 +171,42 @@ downloadFiles_FromGitHub() {
     }
 
 
-if [ $# -ne 3 ] ; then
-    echo "Insufficient arguments. Usage: $0 serverName projectId licenseKey"
+# Check whether agent is already installed or not. If yes, abort process.
+pId=pgrep -f /opt/infraguard/sbin/infraGuardMain
+if [ pId -gt 0 ] ; then
+    echo "177. Agent already running... Abort further process. PID is  $pId"
     exit 1
 fi
 
 
-pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
-echo "infraGuardMain pid = : $pId"
+ps /opt/infraguard/sbin/infraGuardMain | grep httpd > /dev/null
+if [ $? -eq 0 ]; then
+  echo "191. Agent already running... Abort further process"
+  exit 1
+else
+  echo "194. Process is not running."
+  exit 1
+fi
 
-pId=$(ps -ef | grep 'fakeProcess' | grep -v 'grep' | awk '{ printf $2 }')
-echo "fakeProcess pid = : $pId"
+
+if [ $# -ne 3 ] ; then
+    echo "182. Insufficient arguments. Usage: $0 serverName projectId licenseKey"
+    exit 1
+fi
+
+
+
+
+
+
+
+
+
+# pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
+# echo "infraGuardMain pid = : $pId"
+
+# pId=$(ps -ef | grep 'fakeProcess' | grep -v 'grep' | awk '{ printf $2 }')
+# echo "fakeProcess pid = : $pId"
 
 return
 
