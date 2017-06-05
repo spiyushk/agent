@@ -35,9 +35,10 @@ echo ""
 echo $"***********  agent_controller service started. Triggered from /etc/init.d/agent_controller.sh ***********"
 
 command="/opt/infraguard/sbin/infraGuardMain"
-$command &>/dev/null &
 #daemon "nohup $command >/dev/null 2>&1 &"
-#$command
+#thecommand &>/dev/null &
+#$command &>/dev/null &
+disown $command &
 
 
 }
