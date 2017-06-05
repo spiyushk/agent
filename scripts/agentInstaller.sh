@@ -171,23 +171,16 @@ downloadFiles_FromGitHub() {
     }
 
 
-# Check whether agent is already installed or not. If yes, abort process.
-pId=pgrep -f /opt/infraguard/sbin/infraGuardMain
-if [ pId -gt 0 ] ; then
-    echo "177. Agent already running... Abort further process. PID is  $pId"
+
+pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
+ echo "infraGuardMain pid = : $pId"
+
+if [ "$pId" -gt 0 ] ; then
+    echo "---------------- 179. Agent already running. Abort further process. ----------------"
     exit 1
 fi
 
-
-ps /opt/infraguard/sbin/infraGuardMain | grep httpd > /dev/null
-if [ $? -eq 0 ]; then
-  echo "191. Agent already running... Abort further process"
-  exit 1
-else
-  echo "194. Process is not running."
-  exit 1
-fi
-
+exit 1
 
 if [ $# -ne 3 ] ; then
     echo "182. Insufficient arguments. Usage: $0 serverName projectId licenseKey"
@@ -197,17 +190,9 @@ fi
 
 
 
+ 
 
-
-
-
-
-# pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
-# echo "infraGuardMain pid = : $pId"
-
-# pId=$(ps -ef | grep 'fakeProcess' | grep -v 'grep' | awk '{ printf $2 }')
-# echo "fakeProcess pid = : $pId"
-
+ 
 return
 
 checkUserPrivileges
