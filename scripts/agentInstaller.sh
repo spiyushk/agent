@@ -176,7 +176,7 @@ pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
  echo "infraGuardMain pid = : $pId"
 
 if [ "$pId" -gt 0 ] ; then
-    echo "---------------- 179. Agent already running. Abort further process. ----------------"
+    echo "------- 179. Agent already running. Abort further process. Process id is = : $pId --------"
     exit 1
 fi
 
