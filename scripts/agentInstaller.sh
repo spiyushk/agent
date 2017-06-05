@@ -172,11 +172,14 @@ downloadFiles_FromGitHub() {
 
 
 # Check whether agent already is running or not. If yes, then abort further process.
+
+echo "Checking whether agent already running or not."
 pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
- echo "infraGuardMain pid = : $pId"
+ 
 
 if [ "$pId" -gt 0 ] ; then
-    echo "------- 179. Agent already running. Abort further process. Process id is = : $pId --------"
+    echo "Aghent Process id i.e [infraGuardMain] = : $pId"
+    echo "----------- Agent already running. Abort further process. ------------"
     exit 1
 fi
 
@@ -193,7 +196,7 @@ fi
  
 
  
-return
+##########################  return
 
 checkUserPrivileges
 # Read arguments, it will saved into /tmp/serverInfo.txt & then serverMgmt/ServerHandler.go will read.
