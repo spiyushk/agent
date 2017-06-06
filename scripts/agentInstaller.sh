@@ -175,7 +175,7 @@ pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
 file="/opt/infraguard/sbin/infraGuardMain"
 
 if [ -f "$file" ]
-then
+  then
     echo "Agent exe file found at $file "
 
     if [ -z "$pId" ] ; then
@@ -184,26 +184,9 @@ then
         echo "Agent is running. Process id is $pId"
     fi
 
-exit 1
-fi
+  exit 1
 
-
-    # if pgrep -x "$file" > /dev/null
-    # then
-    #     echo "Agent is running. Process id is $pId"
-    # else
-    #  echo "Agent is stopped."
-    # fi
-
-    # if ps -p $pId > /dev/null
-    # then
-    #  echo "Agent process id $pId is running"
-    #  else
-    #  echo "Agent is stopped."
-    # fi
-    #  echo "Abort installation process."
-    # exit 1
-
+   
 fi
 
 
