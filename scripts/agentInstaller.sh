@@ -173,9 +173,19 @@ downloadFiles_FromGitHub() {
 echo "Checking whether agent already installed/running or not."
 pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
 file="/opt/infraguard/sbin/infraGuardMain"
+
 if [ -f "$file" ]
 then
-    echo "$file found. pd is $pId . Abort installation process."
+    echo "Agent exe file found at $file "
+
+    if pgrep -x "$file" > /dev/null
+    then
+        echo "Agent is running. Process id is $pId"
+    else
+     echo "Agent is stopped."
+    fi
+
+     echo "Abort installation process."
     exit 1
 
 fi
