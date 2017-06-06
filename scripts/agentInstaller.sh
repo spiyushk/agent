@@ -178,25 +178,23 @@ if [ -f "$file" ]
 then
     echo "Agent exe file found at $file "
 
-    if pgrep -x "$file" > /dev/null
+    # if pgrep -x "$file" > /dev/null
+    # then
+    #     echo "Agent is running. Process id is $pId"
+    # else
+    #  echo "Agent is stopped."
+    # fi
+
+    if ps -p $pId > /dev/null
     then
-        echo "Agent is running. Process id is $pId"
-    else
+     echo "Agent process id $pId is running"
+     else
      echo "Agent is stopped."
     fi
-
      echo "Abort installation process."
     exit 1
 
 fi
-
-
-# if [ "$pId" -gt 0 ] ; then
-#     echo "Found Agent Process id i.e [infraGuardMain] = : $pId"
-#     echo "----------- Agent already running. Abort further process. ------------"
-#     exit 1
-# fi
-
 
 
 if [ $# -ne 3 ] ; then
