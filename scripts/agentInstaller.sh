@@ -184,6 +184,7 @@ if [ -f "$file" ]
         echo "Agent is running. Process id is $pId"
     fi
 
+  echo "Abort further process."
   exit 1
 
    
