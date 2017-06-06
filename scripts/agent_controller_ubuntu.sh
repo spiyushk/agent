@@ -34,11 +34,14 @@ start() {
 echo ""
 echo $"***********  agent_controller service started. Triggered from /etc/init.d/agent_controller_ubuntu.sh ***********"
 command="/opt/infraguard/sbin/infraGuardMain"
-daemon "nohup $command >/dev/null 2>&1 &"
+#daemon "nohup $command >/dev/null 2>&1 &"
 #$command &>/dev/null &
+$command > /dev/null 2>&1 &
+
+
 
 #$command  > /dev/null 2>&1
-exit
+#exit
 
 
 #disown $command &
