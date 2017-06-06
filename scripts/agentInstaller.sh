@@ -203,7 +203,7 @@ licenseKey=$3
 os=""
 fileAgentController="agent_controller.sh"
 get_osflavor
-install_daemon
+#install_daemon
 echo "os found = : $os"
 create_InfraGuardDirectories
 downloadFiles_FromGitHub
