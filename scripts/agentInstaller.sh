@@ -178,11 +178,13 @@ if [ -f "$file" ]
 then
     echo "Agent exe file found at $file "
 
-if [ -z "$pId" ] ; then
-    echo "Agent is stopped."
-else
-    echo "Agent is running. Process id is $pId"
+    if [ -z "$pId" ] ; then
+        echo "Agent is stopped."
+    else
+        echo "Agent is running. Process id is $pId"
+    fi
 
+exit 1
 fi
 
 
