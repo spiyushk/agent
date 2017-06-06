@@ -80,9 +80,6 @@ create_InfraGuardDirectories(){
 }
 
 
-#sudo chown root:root /path/to/application
-#sudo chmod 700 /path/to/application
-
 install_daemon(){
     echo 'Attempting Daemon Installation'
     cd /tmp
@@ -173,15 +170,22 @@ downloadFiles_FromGitHub() {
 
 # Check whether agent already is running or not. If yes, then abort further process.
 
-echo "Checking whether agent already running or not."
+echo "Checking whether agent already installed/running or not."
 pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
- 
-
-if [ "$pId" -gt 0 ] ; then
-    echo "Found Agent Process id i.e [infraGuardMain] = : $pId"
-    echo "----------- Agent already running. Abort further process. ------------"
+file="/opt/infraguard/sbin/infraGuardMain"
+if [ -f "$file" ]
+then
+    echo "$file found. pd is $pId . Abort installation process."
     exit 1
+
 fi
+
+
+# if [ "$pId" -gt 0 ] ; then
+#     echo "Found Agent Process id i.e [infraGuardMain] = : $pId"
+#     echo "----------- Agent already running. Abort further process. ------------"
+#     exit 1
+# fi
 
 
 
@@ -190,9 +194,8 @@ if [ $# -ne 3 ] ; then
     exit 1
 fi
 
-
  
-##########################  return
+
 
 checkUserPrivileges
 # Read arguments, it will saved into /tmp/serverInfo.txt & then serverMgmt/ServerHandler.go will read.

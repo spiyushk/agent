@@ -30,7 +30,6 @@ pkill  agent_controller_ubuntu.sh
 
 case "$1" in
   start)
-        get_osflavor
         start
         ;;
   stop)
