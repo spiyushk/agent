@@ -1,51 +1,29 @@
 #!/bin/bash
 
 
-get_osflavor(){
+# get_osflavor(){
 
-    if [[ -f "/etc/lsb-release" ]]
-        then
-            os="ubuntu"
-            fileAgentController="agent_controller_ubuntu.sh"
-        elif [[ -f "/etc/redhat-release" ]]
-        then
-            os="rpm"
-        elif [[ -f "/etc/debian_version" ]]
-        then
-            os="debian"
-        else
-            #echo "ERROR: Cannot get the system type. Aborting entire process."
-            os="unknown"
-            #exit 1
-    fi
+#     if [[ -f "/etc/lsb-release" ]]
+#         then
+#             os="ubuntu"
+#             fileAgentController="agent_controller_ubuntu.sh"
+#         elif [[ -f "/etc/redhat-release" ]]
+#         then
+#             os="rpm"
+#         elif [[ -f "/etc/debian_version" ]]
+#         then
+#             os="debian"
+#         else
+#             #echo "ERROR: Cannot get the system type. Aborting entire process."
+#             os="unknown"
+#             #exit 1
+#     fi
   
 
 
-}
-
-<<"COMMENT"
-
-start() {
-(
-
-prog=awslogs
-exec="/usr/sbin/awslogsd"
-lockfile=/var/lock/subsys/awslogs
-pidfile=/var/run/awslogs.pid
-mutexfile=/var/lock/awslogs.mutex
-
-[ -x $exec ] || exit 5
-echo -n $"Starting $prog: "
-daemon $NICELEVEL --pidfile=$pidfile --check=${prog} "nohup $exec >/dev/null 2>&1 &"
-retval=$?
-echo [ $retval -eq 0 ] && touch $lockfile
-) 9>${mutexfile}
-rm -f ${mutexfile}
-}
+# }
 
 
-
-COMMENT
 
 create_InfraGuardDirectories(){
     echo "Creating directories in /opt ..."
@@ -80,22 +58,51 @@ create_InfraGuardDirectories(){
 }
 
 
-install_daemon(){
-    echo 'Attempting Daemon Installation'
-    cd /tmp
-    if [[ "$os" = "debian"  || "$os" = "ubuntu" ]]
-        then
-        wget -q https://github.com/terminalcloud/terminal-tools/raw/master/daemon_0.6.4-2_amd64.deb || exit -1
-        dpkg -i daemon_0.6.4-2_amd64.deb
-        echo "Daemon Installation Done Successfully on debian/ununtu"
-    else
-        wget -q http://libslack.org/daemon/download/daemon-0.6.4-1.x86_64.rpm || exit -1
-        rpm -i daemon-0.6.4-1.x86_64.rpm
-        echo "Daemon Installation Done Successfully on rpm"
-    fi
+# install_daemon(){
+#     echo 'Attempting Daemon Installation'
+#     cd /tmp
+#     if [[ "$os" = "debian"  || "$os" = "ubuntu" ]]
+#         then
+#         wget -q https://github.com/terminalcloud/terminal-tools/raw/master/daemon_0.6.4-2_amd64.deb || exit -1
+#         dpkg -i daemon_0.6.4-2_amd64.deb
+#         echo "Daemon Installation Done Successfully on debian/ununtu"
+#     else
+#         wget -q http://libslack.org/daemon/download/daemon-0.6.4-1.x86_64.rpm || exit -1
+#         rpm -i daemon-0.6.4-1.x86_64.rpm
+#         echo "Daemon Installation Done Successfully on rpm"
+#     fi
+# }
+
+getLinuxType(){
+
+   filename="/opt/infraguard/etc/linuxDistroInfo.txt" 
+   cat /etc/*-release > $filename
+   
+   while IFS= read -r line; do
+
+      if [[ $line == *"ID_LIKE"* ]]; then
+         echo "$line"
+         
+         if [[ $line == *"debian"* ]]; then
+            os="debian"
+            fileAgentController="agent_controller_ubuntu.sh"
+         fi
+
+         if [[ $line == *"rhel"* ]]; then
+            os="rhel"
+         fi
+
+        break;
+
+      fi
+
+  done < "$filename"
+
+
 }
 
-downloadFiles_FromGitHub() {
+
+installAgent() {
     
     echo "Downloading $fileAgentController  > This file will act as a process"
     local url="wget -O /tmp/$fileAgentController https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/$fileAgentController"
@@ -142,7 +149,7 @@ downloadFiles_FromGitHub() {
     $exec
 
 
-     if [[ "$os" = "debian"  || "$os" = "ubuntu" ]] ;then
+     if [[ "$os" = "debian" ]] ;then
             echo " ------- going to call  update-rc.d for agent_controller.sh --------"
             update-rc.d $fileAgentController defaults
      else
@@ -207,11 +214,13 @@ licenseKey=$3
 
 os=""
 fileAgentController="agent_controller.sh"
-get_osflavor
+#get_osflavor
 #install_daemon
-echo "os found = : $os"
+
 create_InfraGuardDirectories
-downloadFiles_FromGitHub
+getLinuxType
+echo "------------  Linux Type = : $os  ----------------"
+installAgent
 
 
 
