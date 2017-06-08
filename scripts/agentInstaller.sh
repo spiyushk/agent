@@ -47,9 +47,10 @@ getLinuxType(){
          osType=${line/ID_LIKE=/""} # Extract string after "=" i.e ID_LIKE="fedora"
          osType="${osType%\"}" # Remove dbl quotes - suffix
          osType="${osType#\"}" # Remove dbl quotes - prefix
-         osType=$osType | tr -d ' ' # Remove space if any
-         osType=${osType,,} # Convert into lower case to isnore case insensitive comparison
-          echo "osType = : $osType"
+        # osType=$osType | tr -d ' ' # Remove space if any
+        # osType=${osType,,} # Convert into lower case to isnore case insensitive comparison
+         
+         echo "osType = : $osType"
           if [[ $osType == "debian" ]]; then
              os="debian"
              fileAgentController="agent_controller_ubuntu.sh"
@@ -86,6 +87,23 @@ installAgent() {
     exec="chmod 700 /etc/init.d/$fileAgentController"
     $exec
 
+    ##########
+     if [[ $osType == "fedora" ]]; then
+            local url="wget -O /tmp/agent_controller https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agent_controller"
+            wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
+            command="mv /tmp/agent_controller  /etc/init.d"
+            $command
+
+            exec="chown root:root /etc/init.d/agent_controller"
+            $exec
+            exec="chmod 700 /etc/init.d/agent_controller"
+            $exec
+    fi
+
+
+   
+
+    ##########
   
     echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
     echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
@@ -117,6 +135,7 @@ installAgent() {
     $exec
     exec="chmod 700 /opt/infraguard/etc/agentConstants.txt"
     $exec
+
 
 
      if [[ "$os" = "debian" ]] ;then
