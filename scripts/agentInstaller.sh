@@ -88,7 +88,7 @@ installAgent() {
     $exec
 
     ##########
-     if [[ $osType == "fedora" ]]; then
+     if [[ $os == "fedora" ]]; then
             local url="wget -O /tmp/agent_controller https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agent_controller"
             wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
             command="mv /tmp/agent_controller  /etc/init.d"
@@ -151,7 +151,11 @@ installAgent() {
 
 
     export start="start"
-    export command="/etc/init.d/$fileAgentController"
+    if [[ $os == "fedora" ]]; then
+        export command="/etc/init.d/agent_controller"    
+    else    
+        export command="/etc/init.d/$fileAgentController"
+    fi
         
     sh $command ${start}
 
