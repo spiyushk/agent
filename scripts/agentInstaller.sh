@@ -155,6 +155,7 @@ installAgent() {
      else
             echo " ------- going to call  chkconfig for agent_controller.sh --------"
             chkconfig --add /etc/init.d/$fileAgentController
+            chkconfig --level 2345 /etc/init.d/$fileAgentController on 
      fi
 
 
