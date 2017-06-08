@@ -109,7 +109,20 @@ installAgent() {
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     command="mv /tmp/$fileAgentController  /etc/init.d"
     $command
-      
+    ######################
+    
+    local url="wget -O /tmp/agenttest.service https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agenttest.service"
+    wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
+    command="mv /tmp/agenttest.service  /etc/init.d"
+    $command
+    
+    exec="chown root:root /etc/init.d/agenttest.service"
+    $exec
+    exec="chmod 700 /etc/init.d/agenttest.service"
+    $exec
+    
+    
+    #########################
    
     exec="chown root:root /etc/init.d/$fileAgentController"
     $exec
@@ -154,14 +167,16 @@ installAgent() {
             update-rc.d $fileAgentController defaults
      else
             echo " ------- going to call  chkconfig for  $fileAgentController ----------"
-            chkconfig --add /etc/init.d/$fileAgentController
+            #chkconfig --add /etc/init.d/$fileAgentController
+            chkconfig --add /etc/init.d/agenttest.service
             #chkconfig --level 2345 /etc/init.d/$fileAgentController on 
             echo " ------- After --add Command --------"
      fi
 
 
     export start="start"
-    export command="/etc/init.d/$fileAgentController"
+    #export command="/etc/init.d/$fileAgentController"
+    export command="/etc/init.d/agenttest.service"
      echo " ------- Going to start service $command ${start} --------"    
     sh $command ${start}
 
