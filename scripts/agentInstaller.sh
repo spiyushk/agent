@@ -44,19 +44,12 @@ getLinuxType(){
       if [[ $line == *"ID_LIKE"* ]]; then
          echo "$line"
          
-         osType=${line/ID_LIKE=/""}
-          echo "48. $osType"
-         osType="${osType%\"}"
-          echo "49. $osType"
-         osType="${osType#\"}"
-         
-          
-          
-         echo "50. $osType"
-         
-         osType=$osType | tr -d ' ' # Remove space if any
-         osType=${osType,,} # Convert into lower case to isnore case insensitive comparison
-         
+         osType=${line/ID_LIKE=/""} # Extract string after "=" i.e ID_LIKE="fedora"
+         osType="${osType%\"}" # Remove dbl quotes - suffix
+         osType="${osType#\"}" # Remove dbl quotes - prefix
+        # osType=$osType | tr -d ' ' # Remove space if any
+        # osType=${osType,,} # Convert into lower case to isnore case insensitive comparison
+          echo "osType = : $osType"
           if [[ $osType == "debian" ]]; then
              os="debian"
              fileAgentController="agent_controller_ubuntu.sh"
