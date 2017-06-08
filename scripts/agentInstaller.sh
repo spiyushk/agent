@@ -45,6 +45,15 @@ getLinuxType(){
          echo "$line"
          
          osType=${line/ID_LIKE=/""}
+          echo "48. $osType"
+         osType="${osType%\"}"
+          echo "49. $osType"
+         osType="${osType#\"}"
+         
+          
+          
+         echo "50. $osType"
+         
          osType=$osType | tr -d ' ' # Remove space if any
          osType=${osType,,} # Convert into lower case to isnore case insensitive comparison
          
