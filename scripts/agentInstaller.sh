@@ -146,19 +146,19 @@ installAgent() {
             if [[ $os == "fedora" ]]; then
                 chkconfig --add /etc/init.d/agent_controller
             else
-                chkconfig --add /etc/init.d/$fileAgentController   
-            fi    
+                chkconfig --add /etc/init.d/$fileAgentController  
+            fi      
      fi
 
 
-    export start="start"
-    if [[ $os == "fedora" ]]; then
-        export command="/etc/init.d/agent_controller"    
-    else    
-        export command="/etc/init.d/$fileAgentController"
-    fi
+     export start="start"
+     if [[ $os == "fedora" ]]; then
+         export command="/etc/init.d/agent_controller"    
+     else    
+         export command="/etc/init.d/$fileAgentController"
+     fi
         
-    sh $command ${start}
+     sh $command ${start}
 
    
     } # downloadFiles_FromGitHub
