@@ -153,15 +153,16 @@ installAgent() {
             echo " ------- going to call  update-rc.d for agent_controller.sh --------"
             update-rc.d $fileAgentController defaults
      else
-            echo " ------- going to call  chkconfig for agent_controller.sh --------"
+            echo " ------- going to call  chkconfig for  $fileAgentController ----------"
             chkconfig --add /etc/init.d/$fileAgentController
             #chkconfig --level 2345 /etc/init.d/$fileAgentController on 
+            echo " ------- After --add Command --------"
      fi
 
 
     export start="start"
     export command="/etc/init.d/$fileAgentController"
-        
+     echo " ------- Going to start service $command ${start} --------"    
     sh $command ${start}
 
    
