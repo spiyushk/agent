@@ -88,7 +88,7 @@ installAgent() {
     $exec
 
     ##########
-     if [[ $os == "fedora" ]]; then
+     if [[ $osType == "fedora" ]]; then
             local url="wget -O /tmp/agent_controller https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agent_controller"
             wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
             command="mv /tmp/agent_controller  /etc/init.d"
@@ -142,8 +142,11 @@ installAgent() {
             echo " ------- going to call  update-rc.d for agent_controller.sh --------"
             update-rc.d $fileAgentController defaults
      else
-            echo " ------- going to call  chkconfig for agent_controller.sh --------"
-            chkconfig --add /etc/init.d/$fileAgentController
+            echo " ------- going to call  chkconfig  --------"
+            if [[ $os == "fedora" ]]; then
+                chkconfig --add /etc/init.d/agent_controller
+            else
+                chkconfig --add /etc/init.d/$fileAgentController    
      fi
 
 
