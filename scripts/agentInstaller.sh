@@ -47,8 +47,8 @@ getLinuxType(){
          osType=${line/ID_LIKE=/""} # Extract string after "=" i.e ID_LIKE="fedora"
          osType="${osType%\"}" # Remove dbl quotes - suffix
          osType="${osType#\"}" # Remove dbl quotes - prefix
-        # osType=$osType | tr -d ' ' # Remove space if any
-        # osType=${osType,,} # Convert into lower case to isnore case insensitive comparison
+         osType=$osType | tr -d ' ' # Remove space if any
+         osType=${osType,,} # Convert into lower case to isnore case insensitive comparison
           echo "osType = : $osType"
           if [[ $osType == "debian" ]]; then
              os="debian"
