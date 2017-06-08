@@ -44,20 +44,21 @@ getLinuxType(){
       if [[ $line == *"ID_LIKE"* ]]; then
          echo "$line"
          
-         osType=${line/ID_LIKE=/""}  #  # Extract string after "=" i.e ID_LIKE="fedora"
-         echo "osType = : $osType"
-         
-
+         osType=${line/ID_LIKE=/""}
+         osType=$osType | tr -d ' ' # Remove space if any
+         osType=${osType,,} # Convert into lower case to isnore case insensitive comparison
          
           if [[ $osType == "debian" ]]; then
              os="debian"
              fileAgentController="agent_controller_ubuntu.sh"
+             echo "condition matched for debian"
           fi
 
 
           if [[ $osType == "fedora" ]]; then
              os="fedora"
              fileAgentController="agent_controller.service"
+             echo "condition matched for fedora"
           fi
         break;
 
@@ -183,6 +184,7 @@ licenseKey=$3
 # Default value for os & fileAgentController is based on Amazon Linux AMI i.e rhel fedora
 os="rhel fedora"
 fileAgentController="agent_controller.sh"
+
 create_InfraGuardDirectories
 getLinuxType
 
