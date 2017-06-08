@@ -44,17 +44,21 @@ getLinuxType(){
       if [[ $line == *"ID_LIKE"* ]]; then
          echo "$line"
          
-         if [[ $line == *"debian"* ]]; then
-            os="debian"
-            fileAgentController="agent_controller_ubuntu.sh"
-         fi
+         osType=${line/ID_LIKE=/""}  #  # Extract string after "=" i.e ID_LIKE="fedora"
+         echo "osType = : $osType"
+         
+
+         
+          if [[ $osType == "debian" ]]; then
+             os="debian"
+             fileAgentController="agent_controller_ubuntu.sh"
+          fi
 
 
-         if [[ $line == "fedora" ]]; then
-            os="fedora"
-            fileAgentController="agent_controller.service"
-         fi
-
+          if [[ $osType == "fedora" ]]; then
+             os="fedora"
+             fileAgentController="agent_controller.service"
+          fi
         break;
 
       fi
