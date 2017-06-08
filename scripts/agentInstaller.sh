@@ -146,7 +146,8 @@ installAgent() {
             if [[ $os == "fedora" ]]; then
                 chkconfig --add /etc/init.d/agent_controller
             else
-                chkconfig --add /etc/init.d/$fileAgentController    
+                chkconfig --add /etc/init.d/$fileAgentController   
+            fi    
      fi
 
 
