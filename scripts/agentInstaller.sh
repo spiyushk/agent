@@ -1,30 +1,6 @@
 #!/bin/bash
 
 
-# get_osflavor(){
-
-#     if [[ -f "/etc/lsb-release" ]]
-#         then
-#             os="ubuntu"
-#             fileAgentController="agent_controller_ubuntu.sh"
-#         elif [[ -f "/etc/redhat-release" ]]
-#         then
-#             os="rpm"
-#         elif [[ -f "/etc/debian_version" ]]
-#         then
-#             os="debian"
-#         else
-#             #echo "ERROR: Cannot get the system type. Aborting entire process."
-#             os="unknown"
-#             #exit 1
-#     fi
-  
-
-
-# }
-
-
-
 create_InfraGuardDirectories(){
     echo "Creating directories in /opt ..."
     exec="mkdir -p /opt/infraguard/sbin"
@@ -58,21 +34,6 @@ create_InfraGuardDirectories(){
 }
 
 
-# install_daemon(){
-#     echo 'Attempting Daemon Installation'
-#     cd /tmp
-#     if [[ "$os" = "debian"  || "$os" = "ubuntu" ]]
-#         then
-#         wget -q https://github.com/terminalcloud/terminal-tools/raw/master/daemon_0.6.4-2_amd64.deb || exit -1
-#         dpkg -i daemon_0.6.4-2_amd64.deb
-#         echo "Daemon Installation Done Successfully on debian/ununtu"
-#     else
-#         wget -q http://libslack.org/daemon/download/daemon-0.6.4-1.x86_64.rpm || exit -1
-#         rpm -i daemon-0.6.4-1.x86_64.rpm
-#         echo "Daemon Installation Done Successfully on rpm"
-#     fi
-# }
-
 getLinuxType(){
 
    filename="/opt/infraguard/etc/linuxDistroInfo.txt" 
@@ -88,8 +49,10 @@ getLinuxType(){
             fileAgentController="agent_controller_ubuntu.sh"
          fi
 
-         if [[ $line == *"rhel"* ]]; then
-            os="rhel"
+
+         if [[ $line == "fedora" ]]; then
+            os="fedora"
+            fileAgentController="agent_controller.service"
          fi
 
         break;
@@ -104,32 +67,19 @@ getLinuxType(){
 
 installAgent() {
     
-    echo "Downloading $fileAgentController  > This file will act as a process"
+    echo "Downloading $fileAgentController "
     local url="wget -O /tmp/$fileAgentController https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/$fileAgentController"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     command="mv /tmp/$fileAgentController  /etc/init.d"
     $command
-    ######################
-    
-    local url="wget -O /tmp/agenttest.service https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agenttest.service"
-    wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
-    command="mv /tmp/agenttest.service  /etc/init.d"
-    $command
-    
-    exec="chown root:root /etc/init.d/agenttest.service"
-    $exec
-    exec="chmod 700 /etc/init.d/agenttest.service"
-    $exec
-    
-    
-    #########################
+      
    
     exec="chown root:root /etc/init.d/$fileAgentController"
     $exec
     exec="chmod 700 /etc/init.d/$fileAgentController"
     $exec
 
-
+  
     echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
     echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
 
@@ -166,18 +116,14 @@ installAgent() {
             echo " ------- going to call  update-rc.d for agent_controller.sh --------"
             update-rc.d $fileAgentController defaults
      else
-            echo " ------- going to call  chkconfig for  $fileAgentController ----------"
-            #chkconfig --add /etc/init.d/$fileAgentController
-            chkconfig --add /etc/init.d/agenttest.service
-            #chkconfig --level 2345 /etc/init.d/$fileAgentController on 
-            echo " ------- After --add Command --------"
+            echo " ------- going to call  chkconfig for agent_controller.sh --------"
+            chkconfig --add /etc/init.d/$fileAgentController
      fi
 
 
     export start="start"
-    #export command="/etc/init.d/$fileAgentController"
-    export command="/etc/init.d/agenttest.service"
-     echo " ------- Going to start service $command ${start} --------"    
+    export command="/etc/init.d/$fileAgentController"
+        
     sh $command ${start}
 
    
@@ -216,7 +162,7 @@ fi
 
 
 if [ $# -ne 3 ] ; then
-    echo "182. Insufficient arguments. Usage: $0 serverName projectId licenseKey"
+    echo "Insufficient arguments. Usage: $0 serverName projectId licenseKey"
     exit 1
 fi
 
@@ -229,14 +175,15 @@ serverName=$1
 projectId=$2
 licenseKey=$3
 
-os=""
-fileAgentController="agent_controller.sh"
-#get_osflavor
-#install_daemon
 
+# Default value for os & fileAgentController is based on Amazon Linux AMI i.e rhel fedora
+os="rhel fedora"
+fileAgentController="agent_controller.sh"
 create_InfraGuardDirectories
 getLinuxType
-echo "------------  Linux Type = : $os  ----------------"
+
+echo "fileAgentController = : $fileAgentController"
+echo "OS = : $os"
 installAgent
 
 

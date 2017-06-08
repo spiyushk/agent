@@ -11,27 +11,27 @@
 
 # Start the service AgentInstaller
 
+ 
 
 start() {
 
-echo ""
-echo $"***********  agent_controller service started. Triggered from /etc/init.d/agent_controller.sh ***********"
+    echo ""
+    echo $"***********  agent_controller service started. Triggered from /etc/init.d/agent_controller.service ***********"
 
-command="/opt/infraguard/sbin/infraGuardMain"
-daemon "nohup $command >/dev/null 2>&1 &"
-
+    command="/opt/infraguard/sbin/infraGuardMain"
+    daemon "nohup $command >/dev/null 2>&1 &"
 }
 
 
 stop(){
-echo "Going to kill process agent_controller"
-pkill  agent_controller.sh
+    echo "Going to kill process agent_controller.service"
+    pkill  agent_controller.service
 
 }
 
+
 case "$1" in
   start)
-        get_osflavor
         start
         ;;
   stop)
@@ -39,7 +39,7 @@ case "$1" in
         ;;
 
 status)
-        status agent_controller.sh
+        status agent_controller.service
         ;;
 
  *)
@@ -48,4 +48,4 @@ status)
 esac
 
 exit 0
-os=""
+
