@@ -47,8 +47,7 @@ getLinuxType(){
          osType="${osType%\"}" # Remove dbl quotes - suffix
          osType="${osType#\"}" # Remove dbl quotes - prefix
        
-         
-         echo "osType = : $osType"
+                
           if [[ $osType == "debian" ]]; then
              os="debian"
              fileAgentController="agent_controller_ubuntu.sh"
@@ -67,19 +66,6 @@ getLinuxType(){
 
 
 }
-
-
-# https://raw.githubusercontent.com/spiyushk/agent/master/scripts/agentInstaller.sh
-# https://raw.githubusercontent.com/spiyushk/agent/master/scripts/agent_controller
-# https://raw.githubusercontent.com/spiyushk/agent/master/scripts/agent_controller.service
-# https://raw.githubusercontent.com/spiyushk/agent/master/scripts/agent_controller.sh
-# https://raw.githubusercontent.com/spiyushk/agent/master/scripts/agent_controller_ubuntu.sh
-# https://github.com/spiyushk/agent/blob/master/go/src/agentController/infraGuardMain
-# https://raw.githubusercontent.com/spiyushk/agent/master/go/src/agentConstants.txt
-
-
-#https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/$fileAgentController
-#https://raw.githubusercontent.com/spiyushk      /agent/master/scripts/agentInstaller.sh
 
 # https://stackoverflow.com/questions/6212219/passing-parameters-to-a-bash-function
 
@@ -111,7 +97,7 @@ getFilePath(){
 }
 
 installAgent() {
-
+# bash <(wget -qO- https://raw.githubusercontent.com/spiyushk/agent/master/scripts/agentInstaller.sh) server111 6 lKey101 
     repoName="spiyushk"
     #repoName="agentinfraguard"
 
@@ -129,7 +115,7 @@ installAgent() {
     $exec
     echo "130. gitFullPath = : $gitFullPath"
 
-      
+    echo ""  
     echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
     echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
 
@@ -174,10 +160,10 @@ installAgent() {
    
 
      if [[ "$os" = "debian" ]] ;then
-            echo " ------- going to call  update-rc.d for $fileAgentController --------"
+            echo " 163------- going to call  update-rc.d for $fileAgentController --------"
             update-rc.d $fileAgentController defaults
      else
-            echo " ------- going to call  chkconfig for $fileAgentController --------"
+            echo "166 ------- going to call  chkconfig for $fileAgentController --------"
              chkconfig --add /etc/init.d/$fileAgentController     
      fi
  
