@@ -24,6 +24,17 @@ $command > /dev/null 2>&1 &
 stop(){
 echo "Going to kill process agent_controller_ubuntu.sh"
 pkill  agent_controller_ubuntu.sh
+pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
+command="Kill -9 $pId"
+$command
+
+if [ $? != 0 ]; then                   
+   echo "Unable to kill process id $pId" 
+else
+   echo "Process $pId killed successfully " 
+fi
+
+
 
 }
 
