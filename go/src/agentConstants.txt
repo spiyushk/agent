@@ -4,7 +4,7 @@
 # getInstruction="https://xhas8lgghd.execute-api.us-west-2.amazonaws.com/dev/getinstructionsforagent"
 
 # Url for Server Regn Process
-# serverRegn="https://ojf489mkrc.execute-api.us-west-2.amazonaws.com/dev/registerserver"
+ serverRegn="https://ojf489mkrc.execute-api.us-west-2.amazonaws.com/dev/registerserver"
 
 # Response Url for different activity. Used when agent finishes their job and returns work status
 # responseUrl_addUser="https://spjuv2c0ae.execute-api.us-west-2.amazonaws.com/dev/addeduserbyagent"
@@ -24,7 +24,7 @@
 getInstruction="https://6ywvm6i971.execute-api.ap-southeast-1.amazonaws.com/prod/getinstructionsforagent"
 
 # Url for Server Regn Process
-serverRegn="https://09q09swczl.execute-api.ap-southeast-1.amazonaws.com/prod/registerserver"
+#serverRegn="https://09q09swczl.execute-api.ap-southeast-1.amazonaws.com/prod/registerserver"
 
 # Response Url for different activity. Used when agent finishes their job and returns work status
 responseUrl_addUser="https://ptj6vnt5z3.execute-api.ap-southeast-1.amazonaws.com/prod/addeduserbyagent"
