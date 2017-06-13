@@ -67,7 +67,7 @@ getLinuxType(){
 
 }
 
-# https://stackoverflow.com/questions/6212219/passing-parameters-to-a-bash-function
+
 
 #  There are two repository on github, infraguard & spiyushk. infraguard is for prod environment & spiyushk is for
 #  testing purpose. Below method will get file name to sownload from intended repository.
@@ -85,13 +85,14 @@ getFilePath(){
        gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/scripts/$fileName"
 
     fi
-
+# https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/agentController/infraGuardMain"
     if [[ $fileName == "infraGuardMain" ]]; then
-       gitFullPath="https://github.com/$repoName/agent/blob/master/go/src/agentController/infraGuardMain"
+       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentController/infraGuardMain"
     fi
 
     if [[ $fileName == "agentConstants.txt" ]]; then
        gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentConstants.txt"
+       # gitFullPath="https://github.com/$repoName/agent/blob/master/go/src/agentController/infraGuardMain"
     fi
 
 }
@@ -149,7 +150,7 @@ installAgent() {
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "agentConstants.txt downloaded."
 
-    echo "166. gitFullPath = : $gitFullPath"
+    echo "152. gitFullPath = : $gitFullPath"
     gitFullPath=""
     exec="chown root:root /opt/infraguard/etc/agentConstants.txt"
     $exec
@@ -219,8 +220,6 @@ if [ $# -ne 3 ] ; then
     echo "Insufficient arguments. Usage: $0 serverName projectId licenseKey"
     exit 1
 fi
-
- 
 
 
 checkUserPrivileges
