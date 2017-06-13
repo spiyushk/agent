@@ -44,10 +44,12 @@ case "$1" in
         start
         ;;
   stop)
+        echo "in switch - stop"
         stop
         ;;
 
-status)
+  status)
+        echo "in switch - status"
         status agent_controller_ubuntu.sh
         ;;
 
@@ -57,3 +59,4 @@ status)
 esac
 
 exit 0
+echo "arg 1 = : $1" 
