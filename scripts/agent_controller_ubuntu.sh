@@ -56,7 +56,12 @@ case "$1" in
  *)
         echo $"Usage: $0 {start|stop|status}"
         exit 1
+        ;;
 esac
 
 exit 0
 echo "arg 1 = : $1" 
+
+
+
+
