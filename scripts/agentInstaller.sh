@@ -15,7 +15,6 @@ create_InfraGuardDirectories(){
     exec="touch  /var/logs/infraguard/activityLog"
     $exec
 
-
    
     exec="chmod 700 -R /opt/infraguard"
     $exec
@@ -47,21 +46,18 @@ getLinuxType(){
          osType=${line/ID_LIKE=/""} # Extract string after "=" i.e ID_LIKE="fedora"
          osType="${osType%\"}" # Remove dbl quotes - suffix
          osType="${osType#\"}" # Remove dbl quotes - prefix
-        # osType=$osType | tr -d ' ' # Remove space if any
-        # osType=${osType,,} # Convert into lower case to isnore case insensitive comparison
+       
          
          echo "osType = : $osType"
           if [[ $osType == "debian" ]]; then
              os="debian"
              fileAgentController="agent_controller_ubuntu.sh"
-             echo "condition matched for debian"
           fi
 
 
           if [[ $osType == "fedora" ]]; then
              os="fedora"
              fileAgentController="agent_controller.service"
-             echo "condition matched for fedora"
           fi
         break;
 
@@ -73,87 +69,125 @@ getLinuxType(){
 }
 
 
+# https://raw.githubusercontent.com/spiyushk/agent/master/scripts/agentInstaller.sh
+# https://raw.githubusercontent.com/spiyushk/agent/master/scripts/agent_controller
+# https://raw.githubusercontent.com/spiyushk/agent/master/scripts/agent_controller.service
+# https://raw.githubusercontent.com/spiyushk/agent/master/scripts/agent_controller.sh
+# https://raw.githubusercontent.com/spiyushk/agent/master/scripts/agent_controller_ubuntu.sh
+# https://github.com/spiyushk/agent/blob/master/go/src/agentController/infraGuardMain
+# https://raw.githubusercontent.com/spiyushk/agent/master/go/src/agentConstants.txt
+
+
+#https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/$fileAgentController
+#https://raw.githubusercontent.com/spiyushk      /agent/master/scripts/agentInstaller.sh
+
+# https://stackoverflow.com/questions/6212219/passing-parameters-to-a-bash-function
+
+#  There are two repository on github, infraguard & spiyushk. infraguard is for prod environment & spiyushk is for
+#  testing purpose. Below method will get file name to sownload from intended repository.
+
+getFilePath(){
+    repoName="$1"
+    fileName="$2"
+    echo "Repo Name = : $repoName"
+    echo "File Name = : $fileName"
+    gitFullPath=""
+
+    if [[ $fileName == "agent_controller.sh"  ||
+         $fileName == "agent_controller.service" ||
+         $fileName == "agent_controller_ubuntu.sh" ]]; then
+       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/scripts/$fileName"
+
+    fi
+
+    if [[ $fileName == "infraGuardMain" ]]; then
+       gitFullPath="https://github.com/$repoName/agent/blob/master/go/src/agentController/infraGuardMain"
+    fi
+
+    if [[ $fileName == "agentConstants.txt" ]]; then
+       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentConstants.txt"
+    fi
+
+}
+
 installAgent() {
-    
+
+    repoName="spiyushk"
+    #repoName="agentinfraguard"
+
+    getFilePath "$repoName" "$fileAgentController"
+    echo "gitFullPath = : $gitFullPath"
     echo "Downloading $fileAgentController "
-    local url="wget -O /tmp/$fileAgentController https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/$fileAgentController"
+    #local url="wget -O /tmp/$fileAgentController https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/$fileAgentController"
+    local url="wget -O /tmp/$fileAgentController $gitFullPath"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     command="mv /tmp/$fileAgentController  /etc/init.d"
     $command
-      
-   
     exec="chown root:root /etc/init.d/$fileAgentController"
     $exec
     exec="chmod 700 /etc/init.d/$fileAgentController"
     $exec
+    echo "130. gitFullPath = : $gitFullPath"
 
-    ##########
-     if [[ $os == "fedora" ]]; then
-            local url="wget -O /tmp/agent_controller https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/agent_controller"
-            wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
-            command="mv /tmp/agent_controller  /etc/init.d"
-            $command
-
-            exec="chown root:root /etc/init.d/agent_controller"
-            $exec
-            exec="chmod 700 /etc/init.d/agent_controller"
-            $exec
-    fi
-
-
-   
-
-    ##########
-  
+      
     echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
     echo "$serverName:$projectId:licenseKey" > /tmp/serverInfo.txt
 
 
+
+    gitFullPath=""
+    getFilePath "$repoName" "infraGuardMain"
+    echo "gitFullPath = : $gitFullPath"
     echo ""
     echo "Downloading infraGuardMain executable. It will take time. Please wait...."
-    url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/agentController/infraGuardMain"
+    url="wget -O /opt/infraguard/sbin/infraGuardMain $gitFullPath"
     
     #url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/test/infraGuardMain"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "infraGuardMain downloaded."
-    
-    
     exec="chown root:root /opt/infraguard/sbin/infraGuardMain"
     $exec
     exec="chmod 700 /opt/infraguard/sbin/infraGuardMain"
     $exec
 
+    echo "153. gitFullPath = : $gitFullPath"
+
+
+    gitFullPath=""
+    getFilePath "$repoName" "agentConstants.txt"
+    echo "gitFullPath = : $gitFullPath"
 
     echo ""
     echo "Downloading property file i.e agentConstants.txt ...."
-    url="wget -O /opt/infraguard/etc/agentConstants.txt https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/agentConstants.txt"
+    url="wget -O /opt/infraguard/etc/agentConstants.txt $gitFullPath"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "agentConstants.txt downloaded."
-   
 
+    echo "166. gitFullPath = : $gitFullPath"
+    gitFullPath=""
     exec="chown root:root /opt/infraguard/etc/agentConstants.txt"
     $exec
     exec="chmod 700 /opt/infraguard/etc/agentConstants.txt"
     $exec
 
 
+   
 
      if [[ "$os" = "debian" ]] ;then
-            echo " ------- going to call  update-rc.d for agent_controller.sh --------"
+            echo " ------- going to call  update-rc.d for $fileAgentController --------"
             update-rc.d $fileAgentController defaults
      else
-            echo " ------- going to call  chkconfig  --------"
-            if [[ $os == "fedora" ]]; then
-                chkconfig --add /etc/init.d/agent_controller
-            else
-                chkconfig --add /etc/init.d/$fileAgentController  
-            fi      
+            echo " ------- going to call  chkconfig for $fileAgentController --------"
+             chkconfig --add /etc/init.d/$fileAgentController     
      fi
+ 
 
 
      export start="start"
+
+     # Since fedore automatically added '.service' suffix in file name, so here ignore file extn
      if [[ $os == "fedora" ]]; then
-         export command="/etc/init.d/agent_controller"    
+         export command="/etc/init.d/agent_controller" 
      else    
          export command="/etc/init.d/$fileAgentController"
      fi
@@ -208,7 +242,7 @@ checkUserPrivileges
 serverName=$1
 projectId=$2
 licenseKey=$3
-
+gitFullPath=""
 
 # Default value for os & fileAgentController is based on Amazon Linux AMI i.e rhel fedora
 os="rhel fedora"
