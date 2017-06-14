@@ -24,17 +24,22 @@ $command > /dev/null 2>&1 &
 stop(){
 echo "Going to kill process agent_controller_ubuntu.sh"
 pkill  agent_controller_ubuntu.sh
+
+
 pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
+echo "pId = : $pId"
 command="/bin/kill -9 $pId"
 $command
+
+
 
 if [ $? != 0 ]; then                   
    echo "Unable to kill process id $pId" 
 else
+   command="update-rc.d -f agent_controller_ubuntu.sh remove"
+   $command 
    echo "Process $pId killed successfully " 
 fi
-
-
 
 }
 
@@ -44,24 +49,16 @@ case "$1" in
         start
         ;;
   stop)
-        echo "in switch - stop"
         stop
         ;;
 
-  status)
-        echo "in switch - status"
+status)
         status agent_controller_ubuntu.sh
         ;;
 
  *)
         echo $"Usage: $0 {start|stop|status}"
         exit 1
-        ;;
 esac
 
 exit 0
-echo "arg 1 = : $1" 
-
-
-
-

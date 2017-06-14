@@ -112,9 +112,9 @@ installAgent() {
     $command
     exec="chown root:root /etc/init.d/$fileAgentController"
     $exec
-    exec="chmod 700 /etc/init.d/$fileAgentController"
+    exec="chmod 755 /etc/init.d/$fileAgentController"
     $exec
-    echo "130. gitFullPath = : $gitFullPath"
+    echo "gitFullPath = : $gitFullPath"
 
     echo ""  
     echo "create  /tmp/serverInfo.txt with following data $serverName:$projectId:$licenseKe >> It will remove after server regn."
@@ -161,10 +161,10 @@ installAgent() {
    
 
      if [[ "$os" = "debian" ]] ;then
-            echo " 163------- going to call  update-rc.d for $fileAgentController --------"
+            echo "Going to call  update-rc.d for $fileAgentController --------"
             update-rc.d $fileAgentController defaults
      else
-            echo "166 ------- going to call  chkconfig for $fileAgentController --------"
+            echo "Going to call  chkconfig for $fileAgentController --------"
              chkconfig --add /etc/init.d/$fileAgentController     
      fi
  
