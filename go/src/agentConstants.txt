@@ -13,11 +13,6 @@
  responseUrl_lockDownServer="https://h80y20gh11.execute-api.us-west-2.amazonaws.com/dev/serverlockeddown"
  responseUrl_unlockServer="https://s93ahm7o93.execute-api.us-west-2.amazonaws.com/dev/unlockserver"
 
-
-
-
-
-
 ########### For Server ip 10.0.1.5 ######################
 
 # Instructions for agent
@@ -32,3 +27,6 @@
 #responseUrl_changePrivilege="https://tutzygcuol.execute-api.ap-southeast-1.amazonaws.com/prod/privilegechangedbyagent"
 #responseUrl_lockDownServer="https://nk7dwmdhk0.execute-api.ap-southeast-1.amazonaws.com/prod/serverlockeddown"
 #responseUrl_unlockServer="https://8u0zrz6b61.execute-api.ap-southeast-1.amazonaws.com/prod/unlockserver"
+responseUrl_changePrivEmail="https://4nl4juhge6.execute-api.ap-southeast-1.amazonaws.com/prod/mailsudocredentials"
+
+DEFAULT_VALUE="DEFAULT_VALUE"
