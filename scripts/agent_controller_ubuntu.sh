@@ -20,7 +20,7 @@ $command > /dev/null 2>&1 &
 
 }
 
-
+# To execute this from CLI --> /etc/init.d/agent_controller_ubuntu.sh stop
 stop(){
 echo "Going to kill process agent_controller_ubuntu.sh"
 pkill  agent_controller_ubuntu.sh

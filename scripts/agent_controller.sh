@@ -23,11 +23,30 @@ daemon "nohup $command >/dev/null 2>&1 &"
 }
 
 
+# To execute this from CLI --> /etc/init.d/agent_controller.sh stop
 stop(){
-echo "Going to kill process agent_controller"
+echo "Going to kill process agent_controller.sh"
 pkill  agent_controller.sh
 
+
+pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
+echo "pId = : $pId"
+command="/bin/kill -9 $pId"
+$command
+
+
+
+if [ $? != 0 ]; then                   
+   echo "Unable to kill process id $pId" 
+else
+   command="update-rc.d -f agent_controller.sh remove"
+   $command 
+   echo "Process $pId killed successfully " 
+fi
+
 }
+
+
 
 case "$1" in
   start)
