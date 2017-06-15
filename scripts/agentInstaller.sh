@@ -51,6 +51,7 @@ getLinuxType(){
           if [[ $osType == "debian" ]]; then
              os="debian"
              fileAgentController="agent_controller_ubuntu.sh"
+             removeProcessCmd="update-rc.d -f agent_controller_ubuntu.sh remove"
           fi
 
 
@@ -222,7 +223,7 @@ if [ $# -ne 3 ] ; then
 fi
 
 
-checkUserPrivileges
+checkUserPrivileges 
 # Read arguments, it will saved into /tmp/serverInfo.txt & then serverMgmt/ServerHandler.go will read.
 serverName=$1
 projectId=$2
