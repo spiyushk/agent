@@ -1,28 +1,20 @@
 
 
 package stringUtil
-// version No 1 dated :- 03-Apr-2017
+
 import (
   _ "fmt" // for unused variable issue
     "strings"
-    //"crypto/rand"
     "math/rand"
     "time"
-
-   // "fmt"
-   // "math/rand"
-   // "strconv"
 )
+
 const zigZagWords = "abcdeFGHijkLMNOpqrstuvwXYZ0123456789"
-//const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 var r *rand.Rand 
 
 func SplitData(data, delim string)([]string){
    data = strings.TrimSpace(data)
- // data = RemoveSpace(data)
-
- 
-  if(len(data) > 0 ){
+   if(len(data) > 0 ){
     return strings.Split(data, delim)
   }else{
     return nil
@@ -77,6 +69,9 @@ func FindKey(info string)(string){
    val = strings.Replace(val, "\"", "", -1)
    return val;
 }
+
+
+
 func init() {
   r = rand.New(rand.NewSource(time.Now().UnixNano()))
 }

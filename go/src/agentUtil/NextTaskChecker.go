@@ -2,7 +2,6 @@ package agentUtil
 
 
 import (
-  //  "os/exec"
   _ "fmt" // for unused variable issue
     "fileUtil"
     "fmt"
@@ -12,11 +11,6 @@ import (
     "stringUtil"
     "strconv"
     "strings"
-    //"bytes"
-   
-    //"serverMgmt"
-   
-  
    
 )
 
@@ -25,12 +19,16 @@ var array = make([]string, maxSize)
 var cntr int = 0
 
 
-func hitApi() string{
+func hitApi(urlForGetInstruction string) string{
   
     array = make([]string, maxSize)
     cntr = 0
 
-    res, err := http.Get(apiUrl_activity)
+   serverIp := ExecComand("hostname --all-ip-addresses", "NextTaskChecker.hitApi(). LN. 33")
+   serverIp = strings.TrimSpace(serverIp)
+   urlForGetInstruction = urlForGetInstruction+"?serverIp="+serverIp
+   urlForGetInstruction = strings.Replace(urlForGetInstruction, "\n","",-1)
+   res, err := http.Get(urlForGetInstruction)
     if err != nil {
         fileUtil.WriteIntoLogFile("Error at NextTaskChecker.hitApi(). LN 35. Msg = : "+err.Error())
         return "1"
@@ -48,6 +46,7 @@ func hitApi() string{
         return "1"
     }
     fmt.Println(data)
+   
     
     parseArray(data)
     TrimArrayToActualSize()
@@ -58,12 +57,17 @@ func hitApi() string{
 
 
 
-func GetNextWork() ([]string){
-	  
+func GetNextWork(urlForGetInstruction string) ([]string){
+	 if(len(urlForGetInstruction) ==0){
+    fileUtil.WriteIntoLogFile("From NextTaskChecker.GetNextWork(). LN 69. Missing url for get next instruction. Abort further process.")
+    return nil
+   } 
+
   for i := 0; i < 10; i++ {
-    respStatus := hitApi();
+    respStatus := hitApi(urlForGetInstruction);
     if(respStatus == "0"){
      
+     printArray()
       isValidData := ValidateArray()
       msg := "NULL"
      
@@ -78,6 +82,8 @@ func GetNextWork() ([]string){
           return nil;
          }
         
+      }else{
+         fileUtil.WriteIntoLogFile("Data not valid NextTaskChecker.GetNextWork() LN. 88. Abort further")
       }
     }
     
@@ -123,9 +129,16 @@ func parseArray(anArray []interface{}) {
 }
 
 func initializeArray(key, val string){
-  key = stringUtil.RemoveSpace(key)
-  val = stringUtil.RemoveSpace(val)
-  if(key == "reqData" || val == "reqData" || len(key) == 0 || len(val) == 0){
+
+  key = strings.TrimSpace(key)
+  val = strings.TrimSpace(val)
+  propertyMap := ReadPropertyFile()
+  DEFAULT_VALUE := GetValueFromPropertyMap(propertyMap, "DEFAULT_VALUE")
+  if(len(val) == 0){
+    val=DEFAULT_VALUE
+  }
+  if(key == "reqData" || val == "reqData" || len(key) == 0 ){
+    fileUtil.WriteIntoLogFile("Missing reqData/key/value NextTaskChecker.initializeArray() LN. 136. Abort further")
     return
   }
   
@@ -162,7 +175,7 @@ func initializeArray(key, val string){
 
 func printArray(){
  
-  fileUtil.WriteIntoLogFile("")
+ // fileUtil.WriteIntoLogFile("")
   if(len(array) > 0 ){
    fileUtil.WriteIntoLogFile("Agent has below works")
     for i := 0; i < len(array); i++ {
@@ -173,9 +186,9 @@ func printArray(){
     fmt.Println("\n--------------------End -------------------") 
     fileUtil.WriteIntoLogFile("")
     
-  }else{
+  }/*else{agentUtil
      fileUtil.WriteIntoLogFile("Agent has no new task.")
-  }
+  }*/
   
   
 }
@@ -195,6 +208,7 @@ func ValidateArray() bool{
    if(values[0] == "activityName"){
       isValidData := checkDataSequence(values[1], i)
       if(isValidData == false){
+        fileUtil.WriteIntoLogFile("NextTaskChecker L209. Method checkDataSequence() returns false.")
         return false;
       }
    }
@@ -203,6 +217,9 @@ func ValidateArray() bool{
   }
 
   isValidData := checkActivityNameSequence()
+  if(isValidData == false){
+    fileUtil.WriteIntoLogFile("NextTaskChecker L218. Method checkActivityNameSequence() returns false.")
+  }
   return isValidData
 }
 
@@ -210,7 +227,11 @@ func ValidateArray() bool{
 func checkDataSequence(activityName string, cnt int) bool{
 
     var values, sequnce []string
-  
+   
+    msg := "cnt = : "+(strconv.Itoa(cnt))
+    fileUtil.WriteIntoLogFile(msg)
+
+
     if(activityName == "addUser"){
       sequnce = []string{"activityName","publicKey", "userName", "shell", "id"}
     }
@@ -218,14 +239,32 @@ func checkDataSequence(activityName string, cnt int) bool{
     if(activityName == "deleteUser"){
       sequnce = []string{"activityName","userName","id"}
     }
+
+
     if(activityName == "changePrivilege"){
-      sequnce = []string{"activityName","userName", "privilege", "id"}
+      sequnce = []string{"activityName","userName", "privilege", "email", "id" }
     }
 
     if(activityName == "lockDownServer"){
       sequnce = []string{"activityName","userList", "id"}
     }
+
+    if(activityName == "unlockServer"){
+      sequnce = []string{"activityName","userList", "id"}
+    }
     
+   
+    msg = "Len sequnce = : "+strconv.Itoa(len(sequnce))
+    fileUtil.WriteIntoLogFile(msg)
+
+   
+    msg = "Len array = : "+ strconv.Itoa(len(sequnce))
+    fileUtil.WriteIntoLogFile(msg)
+
+
+
+
+
     if((cnt + len(sequnce)) > len(array)){
       fmt.Println("Returning false from 209 ")
       return false
@@ -297,12 +336,12 @@ func checkActivityNameSequence() bool{
        }
      }
      if(activityName1 == "changePrivilege"){
-       if((val1 + 4 )!= val2){
+       if((val1 + 5 )!= val2){
         return false
        }
      }
 
-    if(activityName1 == "lockDownServer"){
+    if(activityName1 == "lockDownServer" || activityName1 == "unlockServer"){
        if((val1 + 3 )!= val2){
         return false
        }

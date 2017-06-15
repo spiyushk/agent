@@ -11,6 +11,7 @@ import (
     "io/ioutil"
     "net/http"
     "strings"
+    "stringUtil"
    
 )
 
@@ -49,17 +50,7 @@ func ExecComand(cmd, fromFile string) string {
   }
   serverUrl = serverUrl + qryStr+localQryStr
   serverUrl = strings.Replace(serverUrl, "\n","",-1)
- /*
-  Sir,
-  Due to some personal work, a sum of Rs. 15000/- is needed as advance salary.
-  I will repay it in two installment (10000 & 5000) starting from May salary
-
-  I am requesting you, please sanction the same
-
-  Warm regards
-  Piyush
- */
-  
+   
    // Send execution status [success or fail] 
   
   res, err := http.Get(serverUrl)
@@ -84,50 +75,46 @@ func ExecComand(cmd, fromFile string) string {
 }//sendExecutionStatus
 
  
- /*func SendExecutionStatus(serverUrl string, status string, id string, param ... string) string{
-   serverIp := ExecComand("hostname --all-ip-addresses", "AgentUtil.SendExecutionStatus.go 38")
-   serverIp = strings.TrimSpace(serverIp)
-  
-
-  qryStr := "?serverIp="+serverIp+"&id="+id
-  if(len(param) == 1){
-    qryStr = qryStr + "&userName="+ param[0]
-  }
-
-  if(len(param) == 2){
-    qryStr = qryStr + "&pwd="+ param[1]
-  }
-  
-  if(status == "success"){
-    qryStr = qryStr + "&status=0"
-  }else{
-    qryStr = qryStr + "&status=1"
-  }
-
-  serverUrl = serverUrl + qryStr
-  serverUrl = strings.Replace(serverUrl, "\n","",-1)
+func ReadPropertyFile() map[string]string {
+  var values, rows []string
+  var propertyMap map[string]string
+  propertyMap = make(map[string]string)
  
-  
-   // Send execution status [success or fail] 
-  
-  res, err := http.Get(serverUrl)
-  if err != nil {
-      fileUtil.WriteIntoLogFile("Error at AgentUtil.sendExecutionStatus(). LN 61. Msg = : "+err.Error())
-      status =  "1"
+  data := fileUtil.ReadFile(propertyFilePath, false) 
+  data = strings.Replace( data, "\"","",-1)  // Remove dbl quotes
+
+  rows = stringUtil.SplitData(data, "\n")
+  for _, row := range rows {
+    row = strings.TrimSpace(row)
+    
+    // Ignore row which starts with letter '#'
+    if(strings.HasPrefix(row, "#")){
+      continue
+    }
+    if(strings.Contains(row, "=")){
+       values = stringUtil.SplitData(row, "=")
+       if(len(values) == 2){
+         propertyMap[values[0]] = values[1] 
+       }
+       
+    }
   }
-  _, error := ioutil.ReadAll(res.Body)
-  if error != nil {
-    fileUtil.WriteIntoLogFile("Error at AgentUtil.sendExecutionStatus(). LN 66. Msg = : "+error.Error())
-    status =  "1"
+
+
+  if(propertyMap != nil && len(propertyMap) > 0){
+    return propertyMap  
   }
+  return nil
+  
+}
 
-  fileUtil.WriteIntoLogFile("Successfully sent execution status to this url = : "+serverUrl)
-  fmt.Println("Successfully sent execution status to this url = : ",serverUrl) //success
-  status =  "0"
 
-
-  return status
-
-}//sendExecutionStatus
-*/
+func GetValueFromPropertyMap(propMap map[string]string, key string) string{
+  if(len(key) >0){
+    if(len(propMap[key]) >0 ){
+      return propMap[key]
+    }  
+  }
+  return ""
+}
 

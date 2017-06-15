@@ -5,26 +5,10 @@ package userMgmt
 import (
     
     "fmt"
-    //"io/ioutil"
-    // "encoding/json"
-     //"net/http"
-
-     //  "io/ioutil"
-     //  "net/http"
-    
-     //"reflect"
-    // "strconv"
     
      "fileUtil"
      "agentUtil"
-     //"os/exec" ---------------------------------
-     //"stringUtil"
-
-   // "os"
-    //"os/exec"
     _ "fmt" // for unused variable issue
-  //  "net/smtp"
-   // "log"
       "strings" 
       "stringUtil"
 
@@ -35,14 +19,7 @@ func AddUser(usrLoginName, preferredShell, pubKey string) string {
     removed_dir := "/home/deleted:" + usrLoginName
     home_dir := "/home/" + usrLoginName
     status := ""
-    
-    fmt.Println("usrLoginName = : ", usrLoginName)
-    fmt.Println("preferredShell = : ", preferredShell)
-    fmt.Println("pubKey = : ", pubKey)
-
-    fileUtil.WriteIntoLogFile("Going to create new user account for user "+usrLoginName)
-
-    //return ""
+      
     if(isUserExist(usrLoginName) == false) {
         if(fileUtil.IsFileExisted(home_dir) == false){
           if(fileUtil.IsFileExisted(removed_dir) == true){
@@ -68,11 +45,17 @@ func AddUser(usrLoginName, preferredShell, pubKey string) string {
         msg := "--------- user account "+usrLoginName+" successfully created ---------------"
         fileUtil.WriteIntoLogFile(msg)
         agentUtil.ExecComand("mkdir -p "+home_dir+"/.ssh", "UserHandler.AddUser() L71")
-      
+       
+        
         fileUtil.WriteIntoFile(home_dir+"/.ssh/authorized_keys", pubKey, false, true)
         status = agentUtil.ExecComand("chmod 700 "+home_dir+"/.ssh; chmod 600 "+home_dir+"/.ssh/authorized_keys", "UserHandler.AddUser() L74")
+       // fileUtil.WriteIntoLogFile("status chmod 700 ..."+status)
+
         status = agentUtil.ExecComand(" chown -R "+ usrLoginName+":"+usrLoginName+ " "+ home_dir, "UserHandler.AddUser() L67")
+        //fileUtil.WriteIntoLogFile("status chown ..."+status)
+
         fmt.Println(msg)
+        
 
       }
 
@@ -170,11 +153,13 @@ func ProcessToChangePrivilege(usrName, privType string) string{
       if(rootPrivGrpName == "wheel"){ // For fedora
         cmd = "gpasswd -d  "+usrName +" "+rootPrivGrpName
         status = agentUtil.ExecComand(cmd, "UserHandler.ProcessToChangePrivilege() L178")
+        fileUtil.WriteIntoLogFile("179. status gpasswd -d   = : "+status)
       }
 
       if(rootPrivGrpName == "sudo"){    // For ubuntu
          cmd = "deluser "+usrName +" "+rootPrivGrpName
          status = agentUtil.ExecComand(cmd, "UserHandler.ProcessToChangePrivilege() L183")
+         fileUtil.WriteIntoLogFile("185. status deluser ...   = : "+status)
       }
      
       msg = "\n"+cmd + " >> Status = : "+status
@@ -259,12 +244,23 @@ func isUserExist(usrName string) bool{
 }
 
 
-func UserAccountController(activityName string, nextWork []string, callerLoopCntr int) (int){
+//func UserAccountController(activityName string, nextWork []string, callerLoopCntr int, responseUrl string) (int){
+func UserAccountController(activityName string, nextWork []string, callerLoopCntr int, propertyMap map[string]string) (int){
+    responseUrl := agentUtil.GetValueFromPropertyMap(propertyMap, "responseUrl_"+activityName)
+    if(len(responseUrl) ==0){
+       fileUtil.WriteIntoLogFile("There is no response url found for activityName =:"+activityName)
+     }
+     
     var pubKey, userName, prefShell, privilege, id string
     var values []string
     
+    if(len(responseUrl) ==0){
+       fileUtil.WriteIntoLogFile("Missing response url for activity name = : "+activityName+". >> Abort further process.")
+       activityName="" // To ignore processing which is stored in 'activityName' 
+    }
+    
     if(activityName == "addUser"){
-        responseUrl := "https://ptj6vnt5z3.execute-api.ap-southeast-1.amazonaws.com/prod/addeduserbyagent"
+    
         values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
         pubKey = values[1]
 
@@ -293,8 +289,7 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
     }
 
     if(activityName == "deleteUser"){
-        //responseUrl := "https://vglxmaiux1.execute-api.us-west-2.amazonaws.com/dev/deleteduserbyagent"
-        responseUrl := "https://4lqi1ahlk9.execute-api.ap-southeast-1.amazonaws.com/prod/deleteduserbyagent"
+    
         values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
         userName = values[1]
 
@@ -317,11 +312,9 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
 
 
     if(activityName == "changePrivilege"){
-      //responseUrl := "https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent"
-      responseUrl := "https://tutzygcuol.execute-api.ap-southeast-1.amazonaws.com/prod/privilegechangedbyagent"
-
      
       status := ""
+      email := ""
         values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
         userName = values[1]
 
@@ -329,7 +322,13 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
         privilege = values[1]
 
         values = stringUtil.SplitData(nextWork[callerLoopCntr+3], agentUtil.Delimiter)
+        email = values[1]
+
+        values = stringUtil.SplitData(nextWork[callerLoopCntr+4], agentUtil.Delimiter)
         id = values[1]
+
+        
+
 
         
         msg :=  "Going to change privilege for userName = : "+userName+ " Priv = : "+privilege
@@ -358,16 +357,29 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
         if(len(status) > 4){
             qryString := "userName="+userName+"&privilege=root&password="+status
             agentUtil.SendExecutionStatus(responseUrl, "0" , id, qryString) 
+            
+            urlForEmail_ChangePriv := ""
+            DEFAULT_VALUE := agentUtil.GetValueFromPropertyMap(propertyMap, "DEFAULT_VALUE")
+
+
+            if(email != DEFAULT_VALUE){
+              urlForEmail_ChangePriv = agentUtil.GetValueFromPropertyMap(propertyMap, "responseUrl_changePrivEmail")
+            }
+            
+            if(len(email) > 0 || len(urlForEmail_ChangePriv) > 0){
+              qryString := "password="+status+"&email="+email
+              agentUtil.SendExecutionStatus(urlForEmail_ChangePriv, "0" , id, qryString) 
+            }else{
+              msg = "Due to missing email/api for email_ChangePriv, unable to send response about mail. "+
+                "Email = :  "+email+" >> api for email_ChangePriv = : "+urlForEmail_ChangePriv
+               fileUtil.WriteIntoLogFile(msg)
+            }
+            
         }else{
             qryString := "userName="+userName+"&privilege=normal";
             agentUtil.SendExecutionStatus(responseUrl, status , id, qryString) 
         }
-      /*
-      https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent?
-      id=9&userName=vinyl&privilege=root&status=0&password=qee!@#123&serverIp=172.31.15.1
-*/
-// responseUrl := "https://a1gpcq76u3.execute-api.us-west-2.amazonaws.com/dev/privilegechangedbyagent"
-        callerLoopCntr += 3
+        callerLoopCntr += 4
         return callerLoopCntr
     }
 
@@ -380,8 +392,6 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
 
      if(activityName == "lockDownServer"){
       
-        //responseUrl := "https://h80y20gh11.execute-api.us-west-2.amazonaws.com/dev/serverlockeddown"
-        responseUrl := "https://nk7dwmdhk0.execute-api.ap-southeast-1.amazonaws.com/prod/serverlockeddown"
         status := ""
         var userList []string 
         values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
@@ -412,6 +422,39 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
         fmt.Println("334. UserAccountController status lockDownServer  = : ", status) 
         return callerLoopCntr
     }
+
+
+    if(activityName == "unlockServer"){
+        status := ""
+        var userList []string 
+        values = stringUtil.SplitData(nextWork[callerLoopCntr+1], agentUtil.Delimiter)
+        if(len(values) == 2){
+          userList = stringUtil.SplitData(values[1], ",") 
+          values = stringUtil.SplitData(nextWork[callerLoopCntr+2], agentUtil.Delimiter)
+          id = values[1]
+        }
+    
+        fmt.Println("Going to unlock Server. Following users will going to unlock = : ",userList)
+        fileUtil.WriteIntoLogFile("Going to lock Down Server. Following users going to unlock = : "+strings.Join(userList,","))
+       
+        // Below callerLoopCntr is used to control the loop iteration in caller function.
+        callerLoopCntr += 2
+        unableToUnlockUsers := ProcessToUnlockServer(userList)  
+        fmt.Println("L400 unableToUnlockUsers = : ", unableToUnlockUsers)
+        fileUtil.WriteIntoLogFile("L401 UserHandler unable To Unlock following users = : "+ unableToUnlockUsers)
+
+
+         if(unableToUnlockUsers != "0"){
+           qryString := "aliveAccount="+unableToUnlockUsers
+           agentUtil.SendExecutionStatus(responseUrl, "0" , id, qryString) 
+         }else{
+           agentUtil.SendExecutionStatus(responseUrl, "0" , id, "") 
+         }
+        fmt.Println("334. UserAccountController status unlockServer  = : ", status) 
+        return callerLoopCntr
+    }
+
+
     return callerLoopCntr
 
   }//UserAccountController
@@ -453,3 +496,36 @@ func UserAccountController(activityName string, nextWork []string, callerLoopCnt
 
 
   }//ProcessToLockDownServer
+
+  func ProcessToUnlockServer(usrList []string ) string{
+    unableToUnlockUserList := "" // unableToLockUserList
+     for j := 0; j < len(usrList); j++{
+            userName := usrList[j]
+           /*
+             disallow userName from logging in --> sudo usermod --expiredate 1 userName
+             set expiration date of userName to Never :- sudo usermod --expiredate "" userName
+             chage -l userNameHere
+           */
+            status := agentUtil.ExecComand("usermod --expiredate \"\" "+ userName, "UserHandler.UnlockServer() L504")
+            fmt.Println("status to unlock user = : ",status)
+
+            msg :=  "Unlocking status of user =: "+userName +" is "+status
+            fmt.Println(msg)
+            fileUtil.WriteIntoLogFile(msg)
+            if(status != "success"){
+              if(len(unableToUnlockUserList) == 0){
+                unableToUnlockUserList = userName
+              }else{
+                unableToUnlockUserList = unableToUnlockUserList+ ","+userName
+              }
+            }
+
+         }
+
+      if(len(unableToUnlockUserList) == 0){
+        return "0"
+      }
+      return unableToUnlockUserList
+
+  }//ProcessToLockDownServer
+
