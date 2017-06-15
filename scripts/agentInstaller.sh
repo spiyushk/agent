@@ -232,6 +232,7 @@ gitFullPath=""
 # Default value for os & fileAgentController is based on Amazon Linux AMI i.e rhel fedora
 os="rhel fedora"
 fileAgentController="agent_controller.sh"
+removeProcessCmd="chkconfig --del  $fileAgentController"
 
 create_InfraGuardDirectories
 getLinuxType
