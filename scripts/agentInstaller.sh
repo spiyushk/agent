@@ -238,6 +238,13 @@ getLinuxType
 
 echo "fileAgentController = : $fileAgentController"
 echo "OS = : $os"
+
+echo "installer=$fileAgentController" > /opt/infraguard/etc/agentInfo.txt
+echo "os=$os" >> /opt/infraguard/etc/agentInfo.txt
+echo "removeProcessCmd=$removeProcessCmd" >> /opt/infraguard/etc/agentInfo.txt
+
+
+
 installAgent
 
 
