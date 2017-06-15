@@ -17,14 +17,29 @@ import (
 
 var freqToHitApi_InSeconds uint64 = 20
 
+var propertyMap map[string]string
 func main() {
   fmt.Println("InfraGuard.main()") 
-  respStr :=serverMgmt.DoServerRegnProcess()
-  //respStr="0"
+  fileUtil.WriteIntoLogFile("In InfraGuard.main() ... ")
+  
+  propertyMap = agentUtil.ReadPropertyFile()
+
+   if(propertyMap == nil){
+      fileUtil.WriteIntoLogFile("From InfraGuardMain.go L33 >>  Missing/Check Property file at /opt/infraguard/etc/agentConstants.txt")
+      fileUtil.WriteIntoLogFile("************ Abort Further Process ********************")
+      return
+   }
+  
+  
+  urlForServerRegn := agentUtil.GetValueFromPropertyMap(propertyMap, "serverRegn")
+  respStr :=serverMgmt.DoServerRegnProcess(urlForServerRegn)
+
+
+  
   if(respStr =="0"){
-    fileUtil.WriteIntoLogFile("InfraGuard.main(). Server Regn process executed successfully")
     fmt.Printf("\nServer Regn process executed successfully. Agent next job will be fire on every 20 seconds. Waiting \n")
-    fileUtil.WriteIntoLogFile("---------- Agent next job will be fire on every 90 seconds. Waiting  -------------\n")
+    fileUtil.WriteIntoLogFile("InfraGuard.main(). Server Regn process executed successfully")
+    fileUtil.WriteIntoLogFile("---------- Agent next job will be fire on every 20 seconds. Waiting  -------------\n")
     scheduleAgentjob()
    
   }else{
@@ -44,15 +59,22 @@ func scheduleAgentjob(){
 
 
 func seekNextWork(){
-  nextWork := agentUtil.GetNextWork()
+  
+   urlForGetInstruction := agentUtil.GetValueFromPropertyMap(propertyMap, "getInstruction")
+  nextWork := agentUtil.GetNextWork(urlForGetInstruction)
   var values [] string
   var cntr int 
+ 
+
+
   for i := 0; i < len(nextWork); i++{
     values = stringUtil.SplitData(nextWork[i], agentUtil.Delimiter)
-    if(values[1] == "addUser" || values[1] == "deleteUser" || 
-          values[1] == "changePrivilege" || values[1] == "lockDownServer"){
+    if(values[1] == "addUser" || values[1] == "deleteUser" ||                              
+          values[1] == "changePrivilege" || values[1] == "lockDownServer" || values[1] == "unlockServer"){
+      //responseUrl := agentUtil.GetValueFromPropertyMap(propertyMap, "responseUrl_"+values[1])
       cntr = i
-      cntr := userMgmt.UserAccountController(values[1], nextWork, cntr) ;
+      //cntr := userMgmt.UserAccountController(values[1], nextWork, cntr, responseUrl) ;
+      cntr := userMgmt.UserAccountController(values[1], nextWork, cntr, propertyMap) ;
       i = cntr;
     }
   
@@ -71,3 +93,4 @@ func seekNextWork(){
 func isAlive(){
   fileUtil.WriteIntoLogFile(" -------  Infraguard agent code is still running. Next log will be after 1 Hr.... -------")
 }
+

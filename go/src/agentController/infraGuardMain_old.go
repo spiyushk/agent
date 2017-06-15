@@ -5,15 +5,15 @@ package main
 import (
     
   
-   // "stringUtil"
+    "stringUtil"
     //"serverMgmt"
     "fmt"
     "fileUtil"
     "userMgmt"
-  //  "agentUtil"
+    "agentUtil"
    // "github.com/jasonlvhit/gocron"  // go get github.com/robfig/cron
   
-     //"strings"
+    // "strings"
     //"strconv"
 )
 
@@ -22,18 +22,38 @@ var freqToHitApi_InSeconds uint64 = 20
 
 func main() {
  fmt.Println(" ----------- InfraGuard.main(). ----------------- ")  
-  usrLoginName := "test8"
-  preferredShell := ""
-  pubKey := "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCXpt9zMgAnK8uLHhxRdW4H4ii2yTYw1SIEG4oR89SogncsVSdm2N+blu+9VyOVq93Fy/825EVyrwV7/leQuIKYMxO6sXOx9BDhRIKFff50dsJZZ+hGIF48N7c+EeV42rO87xBx6DOnixNLaEyaRYddM+rKo03RFRNtKZTnheYnrk+lBFoYMIP5VuO7vxzzoK88Kt1mb7LJ9Jg420bV7QFGFwdDGs3He5EfM8jxxi9XLoK5AG4X28o3uRRdUJOC0DoUMbVdKRczlv0Q7RvRM14VPnj+abvdrqt6zw6ieJpKjHclYx3kZoVg3G9Z5I90rnQmIcqcdb7YKa4DM4uLS8FD test@InfraGuard"
- 
+ fileUtil.WriteIntoLogFile(" ----------- InfraGuard.main(). ----------------- ")
 
-  status := userMgmt.AddUser(usrLoginName, preferredShell, pubKey);
+
+ 
+  status := ""
+  msg := ""
+
+   if(fileUtil.IsFileExisted("/tmp/serverInfo.txt")){
+  args := stringUtil.SplitData(fileUtil.ReadFile("/tmp/serverInfo.txt", false), ":")
+  if(len(args) == 3){
+    msg = "\n--------------- sName = : "+args[0]+ " >> pId = : "+args[1] + " >> LKey = : "+args[2]
+    fileUtil.WriteIntoLogFile(msg)
+    agentUtil.ExecComand("rm -r /tmp/serverInfo.txt", "ServerHandler.go 106")
+  }else{
+    fileUtil.WriteIntoLogFile("\n-------------- unable to read /tmp/serverInfo.txt")
+  }
+ }
+
+
+  usrLoginName := "test55"
+  preferredShell := ""
+  pubKey := "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbbt5OuNlKkd3GWkO78eetw+fqzntLhPXt0QUWCY1CqqerZKCG1AKNxh1+SxYk/iUcsiqqQ1GXHjpVqTi0dx/EaTgs2H3WS7lrsr3hLPEJDqaEfxs2m+DFzqYV/PLExaH7Bc6PNTjz39g/MNZyScMw6XAhNoivnaGmlsWmxT2rezXrmAV1dDqR56W4jg7X9PchrMvAo80N7Bo8P6DrpKHEi2eQSH6keZ4IQS/A8730FDdn4WmmOkHSq375y57w5H1jM5zC7ZL2h4YY5BHxcE3/SBgiIMv/6NyqJDPZ9Vf8Ff8cxM7O402fe4yChvzTijlm+yT+VvBkjz7jwPn6p+PH test50@piyush-ubuntu"
   
-  msg := "Final Status of AddUser(). For user  = : "+usrLoginName +" >> status = : "+status
+
+  status = userMgmt.AddUser(usrLoginName, preferredShell, pubKey);
+  msg = "Final Status of AddUser(). For user  = : "+usrLoginName +" >> status = : "+status
   fileUtil.WriteIntoLogFile(msg)
   fmt.Println("\n\n",msg)
 
+  
 
+ /*
   status = userMgmt.ProcessToChangePrivilege(usrLoginName, "root")
   fmt.Println("Final Status of  ProcessToChangePrivilege = : ", status)
 
@@ -49,13 +69,27 @@ func main() {
   fileUtil.WriteIntoLogFile(msg)
   fmt.Println("\n\n",msg)
 
+*/
 
-  usersToLock := []string{"test2", "test4", "test10", "test5"}
+
+  /*usersToLock := []string{"test2", "test51", "test52", "test855"}
   status = userMgmt.ProcessToLockDownServer(usersToLock)
 
-  msg = "Final Status of ProcessToLockDownServer(). >> status = : "+status
+  msg = "\n\nFinal Status of ProcessToLockDownServer(). users are test51 & test52, test855 >> status = : "+status
   fileUtil.WriteIntoLogFile(msg)
   fmt.Println("\n\n",msg)
+
+
+
+  usersToUnlock := []string{"test52"}
+  status = userMgmt.ProcessToUnlockServer(usersToUnlock)
+
+  msg = "Final Status of ProcessTo Unlock Server() for user test52. >> status = : "+status
+  fileUtil.WriteIntoLogFile(msg)
+  fmt.Println("\n\n",msg)
+*/
+
+
 
 
   
