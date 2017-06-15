@@ -99,8 +99,8 @@ getFilePath(){
 
 installAgent() {
 # bash <(wget -qO- https://raw.githubusercontent.com/spiyushk/agent/master/scripts/agentInstaller.sh) server111 6 lKey101 
-    #repoName="spiyushk"
-    repoName="agentinfraguard"
+    repoName="spiyushk"
+    #repoName="agentinfraguard"
 
     getFilePath "$repoName" "$fileAgentController"
     echo "gitFullPath = : $gitFullPath"
