@@ -39,8 +39,9 @@ $command
 if [ $? != 0 ]; then                   
    echo "Unable to kill process id $pId" 
 else
-   command="update-rc.d -f agent_controller.sh remove"
+   command="chkconfig --del agent_controller.sh"
    $command 
+
    echo "Process $pId killed successfully " 
 fi
 
