@@ -7,7 +7,7 @@ getValue "removeProcessCmd"
 
 
 # value of serviceFile was saved at the time of agent installation and it may be
-# agentInstaller.sh/agentInstaller.service/agentUnInstaller_ubuntu.sh
+# agent_controller.sh/agent_controller.service/agent_controller_ubuntu.sh
 echo "serviceFile = : $serviceFile"
 echo "removeProcessCmd = : $removeProcessCmd"
 
