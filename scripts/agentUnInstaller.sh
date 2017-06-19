@@ -2,42 +2,55 @@
 
 uninstall(){
  
-getValue "/opt/infraguard/etc/agentInfo.txt" "installer"    
-getValue "/opt/infraguard/etc/agentInfo.txt" "removeProcessCmd"    
+getValue "serviceFile"    
+getValue "removeProcessCmd"    
 
-echo "Concerned Installer $installerName"
-echo "Removal Command $removeProcessCmd"
+ echo "serviceFile = : $serviceFile"
+ echo "removeProcessCmd = : $removeProcessCmd"
 
-echo "Going to kill process $installerName"
-pkill  $installerName
+<<COMMENT1
+Since serviceFile file exist in /etc/init.d/ directory. So ensure proper file to
+ignore accidental deletion of entire contents in /etc/init.d folder. 
+COMMENT1
+
+if [[ $serviceFile != *"agent_controller"*  ||
+         $removeProcessCmd != *"agent_controller"* ]]; then
+   echo "No valid service file found. Abort process..."
+   exit 1
+fi
+
+
+echo "Going to kill process $serviceFile"
+pkill  $serviceFile
 
 
 echo "Stopping the service..."
-command="/etc/init.d/$installerName stop"
+command="/etc/init.d/$serviceFile stop"
 $command
 
-echo "Stopping the process..."
+
 pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
-echo "infraGuardMain ProcessId = : $pId"
+echo "Stopping the process i.e infraGuardMain."
 command="/bin/kill -9 $pId"
 $command
 
 
 if [ $? != 0 ]; then                   
-   echo "Unable to kill process id $pId " 
+   echo "Unable to kill process id $pId . It may be already stopped." 
 else
    $removeProcessCmd 
    echo "Process $pId killed successfully " 
 fi
 
-echo "Deleting all concerned directories with files..."
+echo "Deleting all concerned directories ..."
 command="rm -rf /opt/infraguard/"
 $command
 
 command="rm -rf /var/logs/infraguard/"
 $command
 
-command="rm -rf etc/init.d/$installerName"
+command="rm -rf etc/init.d/$serviceFile"
+echo "---------------- Full Command  init.d removel --> $command"
 $command
 
 echo ""
@@ -45,25 +58,48 @@ echo "Uninstallation process completes."
 
 } #Uninstall
 
+
+
 getValue(){
-   filename="/opt/infraguard/etc/agentInfo.txt" 
-   key="$2"
+   key="$1"
    while IFS= read -r line; do
 
-      if [[ $line == "$key" ]]; then
-         echo "$line"
-         installerName=${line/$key=/""}
-         break;
+      if [[ $line == *"$key"* ]]; then
+         val=${line/$key=/""}    
+   
+         if [[ $line == "serviceFile"* ]]; then
+              serviceFile=$val
+         fi
 
+         if [[ $line == "removeProcessCmd"* ]]; then
+              removeProcessCmd=$val
+         fi
+
+         break;
       fi
 
-  done < "$filename"
+  done < "$fileName"
 }
 
 
-installerName=""
-removeProcessCmd=""
+if [ `id -u` -ne 0 ] ; then
+            echo "error: Agent uninstallation process requires superuser privilege. Abort process."
+            exit 1
+fi
 
+#fileName="/tmp/agentInfo.txt" 
+fileName="/opt/infraguard/etc/agentInfo.txt" 
+if [ ! -f $fileName ]; then
+    echo "Missing file $fileName. Abort uninstallation process."
+    exit 1
+fi
+
+
+command="cp -r  /etc/init.d  /tmp/"
+$command
+
+serviceFile=""
+removeProcessCmd=""
 uninstall
 
 
