@@ -76,8 +76,8 @@ getLinuxType(){
 getFilePath(){
     repoName="$1"
     fileName="$2"
-    echo "Repo Name = : $repoName"
-    echo "File Name = : $fileName"
+    #echo "Repo Name = : $repoName"
+    #echo "File Name = : $fileName"
     gitFullPath=""
 
     if [[ $fileName == "agent_controller.sh"  ||
@@ -86,14 +86,13 @@ getFilePath(){
        gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/scripts/$fileName"
 
     fi
-# https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/agentController/infraGuardMain"
+
     if [[ $fileName == "infraGuardMain" ]]; then
        gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentController/infraGuardMain"
     fi
 
     if [[ $fileName == "agentConstants.txt" ]]; then
        gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentConstants.txt"
-       # gitFullPath="https://github.com/$repoName/agent/blob/master/go/src/agentController/infraGuardMain"
     fi
 
 }
@@ -104,7 +103,7 @@ installAgent() {
     #repoName="agentinfraguard"
 
     getFilePath "$repoName" "$fileAgentController"
-    echo "gitFullPath = : $gitFullPath"
+    #echo "gitFullPath = : $gitFullPath"
     echo "Downloading $fileAgentController "
     #local url="wget -O /tmp/$fileAgentController https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/$fileAgentController"
     local url="wget -O /tmp/$fileAgentController $gitFullPath"
@@ -125,7 +124,7 @@ installAgent() {
 
     gitFullPath=""
     getFilePath "$repoName" "infraGuardMain"
-    echo "gitFullPath = : $gitFullPath"
+    #echo "gitFullPath = : $gitFullPath"
     echo ""
     echo "Downloading infraGuardMain executable. It will take time. Please wait...."
     url="wget -O /opt/infraguard/sbin/infraGuardMain $gitFullPath"
@@ -138,12 +137,12 @@ installAgent() {
     exec="chmod 700 /opt/infraguard/sbin/infraGuardMain"
     $exec
 
-    echo "153. gitFullPath = : $gitFullPath"
+    #echo "153. gitFullPath = : $gitFullPath"
 
 
     gitFullPath=""
     getFilePath "$repoName" "agentConstants.txt"
-    echo "gitFullPath = : $gitFullPath"
+    #echo "gitFullPath = : $gitFullPath"
 
     echo ""
     echo "Downloading property file i.e agentConstants.txt ...."
@@ -151,7 +150,7 @@ installAgent() {
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "agentConstants.txt downloaded."
 
-    echo "152. gitFullPath = : $gitFullPath"
+    #echo "152. gitFullPath = : $gitFullPath"
     gitFullPath=""
     exec="chown root:root /opt/infraguard/etc/agentConstants.txt"
     $exec
@@ -169,7 +168,6 @@ installAgent() {
              chkconfig --add /etc/init.d/$fileAgentController     
      fi
  
-
 
      export start="start"
 
@@ -223,7 +221,7 @@ if [ $# -ne 3 ] ; then
 fi
 
 
-checkUserPrivileges 
+checkUserPrivileges
 # Read arguments, it will saved into /tmp/serverInfo.txt & then serverMgmt/ServerHandler.go will read.
 serverName=$1
 projectId=$2
@@ -241,7 +239,7 @@ getLinuxType
 echo "fileAgentController = : $fileAgentController"
 echo "OS = : $os"
 
-echo "installer=$fileAgentController" > /opt/infraguard/etc/agentInfo.txt
+echo "serviceFile=$fileAgentController" > /opt/infraguard/etc/agentInfo.txt
 echo "os=$os" >> /opt/infraguard/etc/agentInfo.txt
 echo "removeProcessCmd=$removeProcessCmd" >> /opt/infraguard/etc/agentInfo.txt
 
