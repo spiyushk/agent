@@ -5,23 +5,20 @@ uninstall(){
 getValue "serviceFile"    
 getValue "removeProcessCmd"    
 
- echo "serviceFile = : $serviceFile"
- echo "removeProcessCmd = : $removeProcessCmd"
 
-<<COMMENT1
-Since serviceFile file exist in /etc/init.d/ directory. So ensure proper file to
-ignore accidental deletion of entire contents in /etc/init.d folder. 
-COMMENT1
+# value of serviceFile was saved at the time of agent installation and it may be
+# agentInstaller.sh/agentInstaller.service/agentUnInstaller_ubuntu.sh
+echo "serviceFile = : $serviceFile"
+echo "removeProcessCmd = : $removeProcessCmd"
 
+
+# Since serviceFile file exist in /etc/init.d/ directory. So ensure proper file MUST BE EXIST( to 
+# ignore accidental deletion of entire contents in /etc/init.d folder)
 if [[ $serviceFile != *"agent_controller"*  ||
          $removeProcessCmd != *"agent_controller"* ]]; then
    echo "No valid service file found. Abort process..."
    exit 1
 fi
-
-
-echo "Going to kill process $serviceFile"
-pkill  $serviceFile
 
 
 echo "Stopping the service..."
@@ -35,10 +32,12 @@ command="/bin/kill -9 $pId"
 $command
 
 
+# Restrict service to restart on reboot
+# On the basis of linux type either it has update-rc.d -f ... or chkconfig --del  ....
+# value of removeProcessCmd was saved at the time of agent installation
 $removeProcessCmd 
+
 echo "Process $pId killed successfully " 
-
-
 
 
 echo "Deleting all concerned directories ..."
@@ -59,6 +58,8 @@ echo "Uninstallation process completes."
 
 
 
+# Read the given 'key' from /opt/infraguard/etc/agentInfo.txt file
+# On the basis of key, shared variable will be initialized and uses in uninstall() method.
 getValue(){
    key="$1"
    while IFS= read -r line; do
@@ -80,22 +81,20 @@ getValue(){
   done < "$fileName"
 }
 
-
+# Check whether user has root level access or not.
 if [ `id -u` -ne 0 ] ; then
             echo "error: Agent uninstallation process requires superuser privilege. Abort process."
             exit 1
 fi
 
-#fileName="/tmp/agentInfo.txt" 
+
+# Check whether file existed or not.
 fileName="/opt/infraguard/etc/agentInfo.txt" 
 if [ ! -f $fileName ]; then
-    echo "Missing file $fileName. Abort uninstallation process."
+    echo "Missing file $fileName. This file should be created at the time of agent installation."
     exit 1
 fi
 
-
-command="cp -r  /etc/init.d  /tmp/"
-$command
 
 serviceFile=""
 removeProcessCmd=""

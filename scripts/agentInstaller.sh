@@ -240,6 +240,7 @@ echo "fileAgentController = : $fileAgentController"
 echo "OS = : $os"
 
 
+# agentInfo.txt file will be used at the time of agent Uninstallation process, if needed.
 cat > /opt/infraguard/etc/agentInfo.txt << EOL
 serviceFile=$fileAgentController
 os=$os
