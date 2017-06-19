@@ -40,7 +40,7 @@ $removeProcessCmd
 echo "Process $pId killed successfully " 
 
 
-echo "Deleting all concerned directories ..."
+echo "Deleting all concerned directories & file..."
 command="rm -rf /opt/infraguard/"
 $command
 
@@ -48,7 +48,6 @@ command="rm -rf /var/logs/infraguard/"
 $command
 
 command="rm -rf /etc/init.d/$serviceFile"
-echo "---------------- Full Command  init.d removel --> $command"
 $command
 
 echo ""
