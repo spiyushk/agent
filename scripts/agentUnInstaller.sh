@@ -26,10 +26,11 @@ command="/etc/init.d/$serviceFile stop"
 $command
 
 
-pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
-echo "Stopping the process i.e infraGuardMain."
-command="/bin/kill -9 $pId"
-$command
+# pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
+# echo "Stopping the process i.e infraGuardMain."
+# command="/bin/kill -9 $pId"
+# $command
+killTheProcess
 
 
 # Restrict service to restart on reboot
@@ -37,7 +38,7 @@ $command
 # value of removeProcessCmd was saved at the time of agent installation
 $removeProcessCmd 
 
-echo "Process $pId killed successfully " 
+#echo "Process $pId killed successfully " ##############################
 
 
 echo "Deleting all concerned directories & file..."
@@ -79,6 +80,45 @@ getValue(){
 
   done < "$fileName"
 }
+
+
+killTheProcess(){
+   # Getting the PID of the process
+   PID=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
+   echo "PID = : $PID"
+
+   # Number of seconds to wait before using "kill -9"
+   WAIT_SECONDS=10
+
+   # Counter to keep count of how many seconds have passed
+   count=0
+
+   while kill $PID > /dev/null
+   do
+       # Wait for one second
+       sleep 1
+       # Increment the second counter
+       ((count++))
+
+       # Has the process been killed? If so, exit the loop.
+       if ! ps -p $PID > /dev/null ; then
+           break
+       fi
+
+       # Have we exceeded $WAIT_SECONDS? If so, kill the process with "kill -9"
+       # and exit the loop
+       if [ $count -gt $WAIT_SECONDS ]; then
+           kill -9 $PID
+           break
+       fi
+   done
+   echo "Process has been killed after $count seconds."
+
+
+}
+
+
+
 
 # Check whether user has root level access or not.
 if [ `id -u` -ne 0 ] ; then
