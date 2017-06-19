@@ -35,12 +35,11 @@ command="/bin/kill -9 $pId"
 $command
 
 
-if [ $? != 0 ]; then                   
-   echo "Unable to kill process id $pId . It may be already stopped." 
-else
-   $removeProcessCmd 
-   echo "Process $pId killed successfully " 
-fi
+$removeProcessCmd 
+echo "Process $pId killed successfully " 
+
+
+
 
 echo "Deleting all concerned directories ..."
 command="rm -rf /opt/infraguard/"
@@ -49,7 +48,7 @@ $command
 command="rm -rf /var/logs/infraguard/"
 $command
 
-command="rm -rf etc/init.d/$serviceFile"
+command="rm -rf /etc/init.d/$serviceFile"
 echo "---------------- Full Command  init.d removel --> $command"
 $command
 
