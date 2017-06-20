@@ -22,11 +22,12 @@ if [[ $serviceFile != *"agent_controller"*  ||
 fi
 
 
-echo "Killing the process..."
-
 
 if [ "$isProcessRunning" -gt 0 ]; then
+  echo "Killing the process..."
   killTheProcess
+else
+   echo "Detected - Agent already stopped."
 fi
 
 
@@ -38,7 +39,6 @@ fi
 # value of removeProcessCmd was saved at the time of agent installation
 echo "Restrict process to restart on reboot..."
 $removeProcessCmd 
-
 
 
 
@@ -102,9 +102,10 @@ determineProcessRunningOrNot(){
 
 
 killTheProcess(){
-   # Getting the PID of the process
    
-
+   
+   echo "Going to kill process id = : $PID. by using normal signal."
+   echo "Signal -9 will be fire only after 10 seconds if unable to kill process normally ... "
    # Number of seconds to wait before using "kill -9"
    WAIT_SECONDS=10
 
