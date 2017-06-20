@@ -23,8 +23,8 @@ fi
 
 
 echo "Stopping the service..."
-command="pkill  $serviceFile"
-$command
+# command="pkill  $serviceFile"
+# $command
 
 killTheProcess
 
