@@ -25,6 +25,8 @@ echo "Stopping the service..."
 command="/etc/init.d/$serviceFile stop"
 $command
 
+command="pkill  $serviceFile"
+$command
 
 # pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
 # echo "Stopping the process i.e infraGuardMain."
@@ -116,9 +118,6 @@ killTheProcess(){
 
 
 }
-
-
-
 
 # Check whether user has root level access or not.
 if [ `id -u` -ne 0 ] ; then
