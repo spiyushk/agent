@@ -32,23 +32,27 @@ killTheProcess
 # Restrict service to restart on reboot
 # On the basis of linux type either it has update-rc.d -f ... or chkconfig --del  ....
 # value of removeProcessCmd was saved at the time of agent installation
+echo "Restrict process to restart on reboot..."
 $removeProcessCmd 
 
 
 
 
-echo "Deleting all concerned directories & file..."
+echo "Deleting /opt/infraguard/ directory..."
 command="rm -rf /opt/infraguard/"
 $command
 
+
+echo "Deleting /var/logs/infraguard/ directory..."
 command="rm -rf /var/logs/infraguard/"
 $command
 
+echo "Deleting service file at /etc/init.d/$serviceFile..."
 command="rm -rf /etc/init.d/$serviceFile"
 $command
 
 echo ""
-echo "Uninstallation process completes."
+echo "****************** Uninstallation process completes. *******************"
 
 } #Uninstall
 
