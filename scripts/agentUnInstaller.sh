@@ -21,9 +21,9 @@ if [[ $serviceFile != *"agent_controller"*  ||
 fi
 
 
-echo "Stopping the service..."
-command="/etc/init.d/$serviceFile stop"
-$command
+# echo "Stopping the service..."
+# command="/etc/init.d/$serviceFile stop"
+# $command
 
 command="pkill  $serviceFile"
 $command
