@@ -87,14 +87,24 @@ getValue(){
 
 determineProcessRunningOrNot(){
    PID=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
-   if ps -p $PID > /dev/null
-   then
-     isProcessRunning=1
-     echo "Agent is running & its PID = : $PID"
+   if [ $? -eq 0 ]; then
+      isProcessRunning=1
+      echo "Agent is running & its PID = : $PID"
    else
       isProcessRunning=0
       echo "Agent is stopped"
    fi
+
+
+
+   # if ps -p $PID > /dev/null
+   # then
+   #   isProcessRunning=1
+   #   echo "Agent is running & its PID = : $PID"
+   # else
+   #    isProcessRunning=0
+   #    echo "Agent is stopped"
+   # fi
 
 
 
