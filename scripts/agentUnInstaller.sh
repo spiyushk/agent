@@ -25,7 +25,7 @@ fi
 echo "Killing the process..."
 
 
-if [[ $isProcessRunning gt 0 ]]; then
+if [[ $isProcessRunning -gt 0 ]]; then
   killTheProcess
 fi
 
