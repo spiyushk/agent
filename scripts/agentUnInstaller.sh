@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 uninstall(){
  
 getValue "serviceFile"    
@@ -7,7 +8,7 @@ getValue "removeProcessCmd"
 
 
 # value of serviceFile was saved at the time of agent installation and it may be
-# agent_controller.sh/agent_controller.service/agent_controller_ubuntu.sh
+# agent_controller.sh or agent_controller.service or agent_controller_ubuntu.sh
 echo "serviceFile = : $serviceFile"
 echo "removeProcessCmd = : $removeProcessCmd"
 
@@ -21,17 +22,10 @@ if [[ $serviceFile != *"agent_controller"*  ||
 fi
 
 
-# echo "Stopping the service..."
-# command="/etc/init.d/$serviceFile stop"
-# $command
-
+echo "Stopping the service..."
 command="pkill  $serviceFile"
 $command
 
-# pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
-# echo "Stopping the process i.e infraGuardMain."
-# command="/bin/kill -9 $pId"
-# $command
 killTheProcess
 
 
@@ -40,7 +34,7 @@ killTheProcess
 # value of removeProcessCmd was saved at the time of agent installation
 $removeProcessCmd 
 
-#echo "Process $pId killed successfully " ##############################
+
 
 
 echo "Deleting all concerned directories & file..."
