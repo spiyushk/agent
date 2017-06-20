@@ -22,7 +22,6 @@ if [[ $serviceFile != *"agent_controller"*  ||
 fi
 
 
-
 if [ "$isProcessRunning" -gt 0 ]; then
   echo "Killing the process..."
   killTheProcess
@@ -31,15 +30,11 @@ else
 fi
 
 
-
-
-
 # Restrict service to restart on reboot
 # On the basis of linux type either it has update-rc.d -f ... or chkconfig --del  ....
 # value of removeProcessCmd was saved at the time of agent installation
 echo "Restrict process to restart on reboot..."
 $removeProcessCmd 
-
 
 
 echo "Deleting /opt/infraguard/ directory..."
@@ -59,7 +54,6 @@ echo ""
 echo "****************** Uninstallation process completes. *******************"
 
 } #Uninstall
-
 
 
 # Read the given 'key' from /opt/infraguard/etc/agentInfo.txt file
@@ -85,6 +79,7 @@ getValue(){
   done < "$fileName"
 }
 
+
 determineProcessRunningOrNot(){
    PID=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
    
@@ -94,21 +89,7 @@ determineProcessRunningOrNot(){
       echo "Agent is running & its PID = : $PID"
    else
       isProcessRunning=0
-      echo "Agent is stopped"
    fi
-
-
-
-   # if ps -p $PID > /dev/null
-   # then
-   #   isProcessRunning=1
-   #   echo "Agent is running & its PID = : $PID"
-   # else
-   #    isProcessRunning=0
-   #    echo "Agent is stopped"
-   # fi
-
-
 
 } # DetermineProcessRunningOrNot
 
@@ -116,8 +97,9 @@ determineProcessRunningOrNot(){
 killTheProcess(){
    
    
-   echo "Going to kill process id = : $PID. by using normal signal."
+   echo "Going to kill process id = : $PID by using normal signal."
    echo "Signal -9 will be fire only after 10 seconds if unable to kill process normally ... "
+   
    # Number of seconds to wait before using "kill -9"
    WAIT_SECONDS=10
 
