@@ -31,8 +31,8 @@ responseUrl_changePrivEmail="https://4nl4juhge6.execute-api.ap-southeast-1.amazo
 
 DEFAULT_VALUE="DEFAULT_VALUE"
 
-# Default file for env variable manipulation. If not found, then system will consider 2nd option (Currently missing)
-default_user_specific_envFile=".bash_profile"
-default_system_specific_envFile="/etc/profile"
+# Below are file for env variable manipulation. Put another file with COMMA.If bash_profile is missing on any distro, # then system will try to find such file which is after .bash_profile. Same rule also apply for system_specific_envFile.
+user_specific_envFile=".bash_profile"
+system_specific_envFile="/etc/profile"
 
 
