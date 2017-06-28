@@ -30,7 +30,9 @@ responseUrl_unlockServer="https://8u0zrz6b61.execute-api.ap-southeast-1.amazonaw
 responseUrl_changePrivEmail="https://4nl4juhge6.execute-api.ap-southeast-1.amazonaws.com/prod/mailsudocredentials"
 
 DEFAULT_VALUE="DEFAULT_VALUE"
-first_user_specific_envFile=".bash_profile"
-first_system_specific_envFile="/etc/profile"
+
+# Default file for env variable manipulation. If not found, then system will consider 2nd option (Currently missing)
+default_user_specific_envFile=".bash_profile"
+default_system_specific_envFile="/etc/profile"
 
 
