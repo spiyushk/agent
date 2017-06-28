@@ -31,8 +31,15 @@ responseUrl_changePrivEmail="https://4nl4juhge6.execute-api.ap-southeast-1.amazo
 
 DEFAULT_VALUE="DEFAULT_VALUE"
 
-# Below are file for env variable manipulation. Put another file with COMMA.If bash_profile is missing on any distro, # then system will try to find such file which is after .bash_profile. Same rule also apply for system_specific_envFile.
+########################## Env Related Data ##################################
+# Below are file for env variable manipulation. Put another file with COMMA.If bash_profile is missing on any distro,
+# then system will try to find such file which is after .bash_profile. Same rule also apply for system_specific_envFile.
+
 user_specific_envFile=".bash_profile"
 system_specific_envFile="/etc/profile"
+
+# No one can change/set below variables even with root level user
+restricted_env_variables="PATH,EDITOR,VISUAL,PRINTER,LPDEST,PWD,HOME,SHELL,USER,LOGNAME,TERM,TERMCAP,ENV,BASH_ENV,PAGER,PS1,PS2,MANPATH,TZ,DISPLAY,INPUTRC,LS_COLORS,LS_COLOURS,DOMAIN,HISTSIZE,HOSTNAME,LANG,LD_LIBRARY_PATH,MAIL,OS,OSTYPE,UID,XENVIRONMENT,XFILESEARCHPATH"
+
 
 
