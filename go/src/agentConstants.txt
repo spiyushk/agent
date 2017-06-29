@@ -37,7 +37,9 @@ DEFAULT_VALUE="DEFAULT_VALUE"
 # Format of the comma separated file names will be user_specific_envFile=".bash_profile,.bash_profile,.profile"
 
 user_specific_envFile=".bashrc"
-system_specific_envFile="/etc/profile"
+
+# Below file name by default will search on /etc/ directory
+system_specific_envFile="profile" 
 
 # No one can change/set below variables even with root level user
 restricted_env_variables="PATH,EDITOR,VISUAL,PRINTER,LPDEST,PWD,HOME,SHELL,USER,LOGNAME,TERM,TERMCAP,ENV,BASH_ENV,PAGER,PS1,PS2,MANPATH,TZ,DISPLAY,INPUTRC,LS_COLORS,LS_COLOURS,DOMAIN,HISTSIZE,HOSTNAME,LANG,LD_LIBRARY_PATH,MAIL,OS,OSTYPE,UID,XENVIRONMENT,XFILESEARCHPATH"
