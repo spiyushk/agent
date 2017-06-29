@@ -34,6 +34,7 @@ DEFAULT_VALUE="DEFAULT_VALUE"
 ########################## Env Related Data ##################################
 # Below are file for env variable manipulation. Put another file with COMMA.If bash_profile is missing on any distro,
 # then system will try to find such file which is after .bash_profile. Same rule also apply for system_specific_envFile.
+# Format of the comma separated file names will be user_specific_envFile=".bash_profile,.bash_profile,.profile"
 
 user_specific_envFile=".bash_profile"
 system_specific_envFile="/etc/profile"
