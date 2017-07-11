@@ -9,13 +9,12 @@
 # Get function from functions library
 # Start the service AgentInstaller
 
- 
 
 start() {
 
 echo ""
 echo $"***********  agent_controller service started. Triggered from /etc/init.d/agent_controller_ubuntu.sh ***********"
-command="/opt/infraguard/sbin/infraGuardMain_old"
+command="/opt/infraguard/sbin/infraGuardMain"
 $command > /dev/null 2>&1 &
 
 }
@@ -26,7 +25,7 @@ echo "Going to kill process agent_controller_ubuntu.sh"
 pkill  agent_controller_ubuntu.sh
 
 
-pId=$(ps -ef | grep 'infraGuardMain_old' | grep -v 'grep' | awk '{ printf $2 }')
+pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
 echo "pId = : $pId"
 command="/bin/kill -9 $pId"
 $command

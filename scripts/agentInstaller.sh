@@ -87,8 +87,8 @@ getFilePath(){
 
     fi
 
-    if [[ $fileName == "infraGuardMain_old" ]]; then
-       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentController/infraGuardMain_old"
+    if [[ $fileName == "infraGuardMain" ]]; then
+       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentController/infraGuardMain"
     fi
 
     if [[ $fileName == "agentConstants.txt" ]]; then
@@ -123,20 +123,20 @@ installAgent() {
 
 
     gitFullPath=""
-    getFilePath "$repoName" "infraGuardMain_old"
+    getFilePath "$repoName" "infraGuardMain"
     #echo "gitFullPath = : $gitFullPath"
     echo ""
     echo "Downloading infraGuardMain executable. It will take time. Please wait...."
     #url="wget -O /opt/infraguard/sbin/infraGuardMain $gitFullPath"
-    url="wget -O /opt/infraguard/sbin/infraGuardMain_old $gitFullPath"
+    url="wget -O /opt/infraguard/sbin/infraGuardMain $gitFullPath"
 
     
     #url="wget -O /opt/infraguard/sbin/infraGuardMain https://raw.githubusercontent.com/agentinfraguard/agent/master/go/src/test/infraGuardMain"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo "infraGuardMain downloaded."
-    exec="chown root:root /opt/infraguard/sbin/infraGuardMain_old"
+    exec="chown root:root /opt/infraguard/sbin/infraGuardMain"
     $exec
-    exec="chmod 700 /opt/infraguard/sbin/infraGuardMain_old"
+    exec="chmod 700 /opt/infraguard/sbin/infraGuardMain"
     $exec
 
     #echo "153. gitFullPath = : $gitFullPath"
@@ -197,8 +197,8 @@ installAgent() {
 # Check whether agent already is running or not. If yes, then abort further process.
 
 echo "Checking whether agent already installed/running or not."
-pId=$(ps -ef | grep 'infraGuardMain_old' | grep -v 'grep' | awk '{ printf $2 }')
-file="/opt/infraguard/sbin/infraGuardMain_old"
+pId=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
+file="/opt/infraguard/sbin/infraGuardMain"
 
 if [ -f "$file" ]
   then
