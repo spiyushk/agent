@@ -50,9 +50,9 @@ restricted_env_variables="PATH,EDITOR,VISUAL,PRINTER,LPDEST,PWD,HOME,SHELL,USER,
  usrName="rhel"
  envScope="system_speciifc"
  #envScope="user_speciifc"
- envKey="rhel  space Key"
+ envKey="rhel ::A  space Key"
  #envKey=""
- envVal="rhel space Value"
+ envVal="rhel: : space :: Value"
 
  
  
