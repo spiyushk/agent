@@ -81,7 +81,7 @@ getValue(){
 
 
 determineProcessRunningOrNot(){
-   PID=$(ps -ef | grep 'infraGuardMain' | grep -v 'grep' | awk '{ printf $2 }')
+   PID=$(ps -ef | grep 'infraGuardMain_old' | grep -v 'grep' | awk '{ printf $2 }')
    
    ps --pid $PID &>/dev/null
    if [ $? -eq 0 ]; then
@@ -126,8 +126,6 @@ killTheProcess(){
        fi
    done
    echo "Process has been killed after $count seconds."
-
-
 }
 
 # Check whether user has root level access or not.
