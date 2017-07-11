@@ -13,6 +13,8 @@ const Delimiter = ":"
 */
 
 const propertyFilePath = "/opt/infraguard/etc/agentConstants.txt"
+ // const propertyFilePath = "/tmp/agentConstants.txt"
+  
 
 
 

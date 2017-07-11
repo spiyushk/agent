@@ -12,6 +12,7 @@ import (
     "strconv"
     "strings"
    
+   
 )
 
 var maxSize int = 100
@@ -254,15 +255,6 @@ func checkDataSequence(activityName string, cnt int) bool{
     }
     
    
-    msg = "Len sequnce = : "+strconv.Itoa(len(sequnce))
-    fileUtil.WriteIntoLogFile(msg)
-
-   
-    msg = "Len array = : "+ strconv.Itoa(len(sequnce))
-    fileUtil.WriteIntoLogFile(msg)
-
-
-
 
 
     if((cnt + len(sequnce)) > len(array)){
@@ -351,7 +343,6 @@ func checkActivityNameSequence() bool{
   }//I
  return true
 }
-
 func TrimArrayToActualSize(){
   var cnt int = 0 
   for i := 0; i < len(array); i++ {
@@ -365,3 +356,5 @@ func TrimArrayToActualSize(){
   tmp = nil
   
 }
+
+

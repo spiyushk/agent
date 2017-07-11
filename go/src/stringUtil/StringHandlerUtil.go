@@ -91,3 +91,38 @@ func RemoveSymplos(word string, symbols... string)(string){
     }
     return word
 }
+
+func IsInvalidString(data string, requiredMinLength int, 
+  requiredMaxLength int, removeBlankSpaces string) string{
+
+  if(len(data) == 0){
+    return "yes"
+  }
+  if(strings.ToLower(removeBlankSpaces) == "yes"){
+     data = strings.TrimSpace(data)
+      if(len(data) == 0){
+        return "yes"
+      }
+  }
+  if(len(data) < requiredMinLength){
+     return "yes"
+  }
+
+  if(requiredMaxLength > 0 && len(data) > requiredMaxLength){
+     return "yes"
+  }
+  return "no"
+
+}
+
+func CompareString_I(str1, str2 string)bool{
+  str1 = strings.TrimSpace(str1)
+  str2 = strings.TrimSpace(str2)
+  if(len(str1) > 0 && len(str2) > 0){
+    str1 = strings.ToLower(str1) 
+    str2 = strings.ToLower(str2) 
+    return str1 == str2
+  }
+  return false;
+
+}

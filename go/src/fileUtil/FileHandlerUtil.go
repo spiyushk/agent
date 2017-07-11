@@ -12,12 +12,14 @@ import (
     "log"
     "strings"
     "bufio"
+    
 
 )
 
 
 
- const logFilePath = "/var/logs/infraguard/activityLog"   
+const logFilePath = "/var/logs/infraguard/activityLog"   
+//const logFilePath = "/tmp/activityLog"   
 func IsFileExisted(filePath string) (bool) {
    _, err := os.Stat(filePath)
     if err != nil {
@@ -146,3 +148,4 @@ func ReplaceLineOrLinesIntoFile(filePath, oldLine, newLine string) string{
     return "0"   
         
   }//ReplaceLineOrLinesIntoFile 
+

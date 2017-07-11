@@ -110,7 +110,7 @@ func Sudoers_del(userLoginName string){
 */
 func ProcessToChangePrivilege(usrName, privType string) string{
     
-    rootPrivGrpName := GetSudo_GrpName() // rootPrivGrpName stores os name i.e On ubuntu, it is 'sudo' & on fedora, it is 'wheel'
+    rootPrivGrpName := agentUtil.GetSudo_GrpName() // rootPrivGrpName stores os name i.e On ubuntu, it is 'sudo' & on fedora, it is 'wheel'
     if(len(rootPrivGrpName) == 0){
          msg := "UserHandler.ProcessToChangePrivilege(). Unable to locate sudo/wheel. "+
                     "May be it is commented. Abort further process. L 132."
@@ -120,7 +120,7 @@ func ProcessToChangePrivilege(usrName, privType string) string{
     }
     msg := ""
     cmd := ""
-    grpOfUser := getUser_AllGrp(usrName) // grpOfUser stores, all group name in which user is a member
+    grpOfUser := agentUtil.GetUser_AllGrp(usrName) // grpOfUser stores, all group name in which user is a member
     isUsrHasRootPriv := strings.Contains(grpOfUser, rootPrivGrpName)
 
      if(privType != "root" && isUsrHasRootPriv == false){
@@ -179,7 +179,9 @@ func ProcessToChangePrivilege(usrName, privType string) string{
   wheaeas  in fedora , sudo group is 'wheel' group
   It is assumed that sudoers group either sudo/wheel are uncommented wherever applicable.
 */
-func GetSudo_GrpName()string{
+
+
+/*func GetSudo_GrpName()string{
   rootPrivGrpName := ""
      status := agentUtil.ExecComand("getent group sudo", "UserHandler.GetSudo_GrpName() L211")
         if(status == "fail"){
@@ -197,7 +199,7 @@ func GetSudo_GrpName()string{
 func getUser_AllGrp(usrName string) string{  
   groupNames := agentUtil.ExecComand("id -nG "+usrName, "UserHandler.getUser_AllGrp() L225")
   return groupNames
-}
+}*/
 
 
 // To become  a root user, user must have a new password
@@ -242,6 +244,7 @@ func isUserExist(usrName string) bool{
     }
     return true;
 }
+
 
 
 //func UserAccountController(activityName string, nextWork []string, callerLoopCntr int, responseUrl string) (int){
