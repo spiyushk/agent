@@ -50,10 +50,10 @@ restricted_env_variables="PATH,EDITOR,VISUAL,PRINTER,LPDEST,PWD,HOME,SHELL,USER,
  usrName="rhel"
  envScope="system_speciifc"
  #envScope="user_speciifc"
- envKey="key_1107 13:48_S"
+ envKey="key_1107 13:55_S"
  #envKey=""
- #envVal="value_1107 13:48_S"
- envVal=" "
+ envVal="value_1107 13:55_S"
+
  
  
  
