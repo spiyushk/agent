@@ -43,17 +43,3 @@ system_specific_envFile="profile"
 
 # No one can change/set below variables even with root level user
 restricted_env_variables="PATH,EDITOR,VISUAL,PRINTER,LPDEST,PWD,HOME,SHELL,USER,LOGNAME,TERM,TERMCAP,ENV,BASH_ENV,PAGER,PS1,PS2,MANPATH,TZ,DISPLAY,INPUTRC,LS_COLORS,LS_COLOURS,DOMAIN,HISTSIZE,HOSTNAME,LANG,LD_LIBRARY_PATH,MAIL,OS,OSTYPE,UID,XENVIRONMENT,XFILESEARCHPATH"
-
-
-# For Testing Purposes Only ####################
- requestFor="set"
- usrName="rhel"
- envScope="system_speciifc"
- #envScope="user_speciifc"
- envKey="rhel ::A  space Key"
- #envKey=""
- envVal="rhel: : space :: Value"
-
- 
- 
- 
