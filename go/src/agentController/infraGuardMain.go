@@ -71,21 +71,18 @@ func seekNextWork(){
     values = stringUtil.SplitData(nextWork[i], agentUtil.Delimiter)
     if(values[1] == "addUser" || values[1] == "deleteUser" ||                              
           values[1] == "changePrivilege" || values[1] == "lockDownServer" || values[1] == "unlockServer"){
-      //responseUrl := agentUtil.GetValueFromPropertyMap(propertyMap, "responseUrl_"+values[1])
       cntr = i
-      //cntr := userMgmt.UserAccountController(values[1], nextWork, cntr, responseUrl) ;
       cntr := userMgmt.UserAccountController(values[1], nextWork, cntr, propertyMap) ;
       i = cntr;
     }
   
-    if(values[1] == "listEnv"){
-     // agentUtil.Send_EnVData()
+    if(values[1] == "getEnv" || values[1] == "setEnv" || values[1] == "unsetEnv"){
+      cntr = i
+      cntr = agentUtil.HandleEnvRequest(values[1], nextWork , cntr, propertyMap) 
+      i = cntr;
+
     }
 
-     if(values[1] == "addEnv"){
-        //agentUtil.SetEnvData("piyush","cantata_Key102", "cantata_Value102")
-    }
- 
   }
 
 }
