@@ -48,12 +48,12 @@ restricted_env_variables="PATH,EDITOR,VISUAL,PRINTER,LPDEST,PWD,HOME,SHELL,USER,
 # For Testing Purposes Only ####################
  requestFor="set"
  usrName="rhel"
- #envScope="system_speciifc"
- envScope="user_speciifc"
- envKey="key_1107 13:32_U"
+ envScope="system_speciifc"
+ #envScope="user_speciifc"
+ envKey="key_1107 13:48_S"
  #envKey=""
- envVal="value_1107 13:32_U"
- #envVal=""
+ #envVal="value_1107 13:48_S"
+ envVal=" "
  
  
  
