@@ -222,7 +222,7 @@ if [ $# -ne 3 ] ; then
     exit 1
 fi
 
-
+echo "agent hit"
 checkUserPrivileges
 # Read arguments, it will saved into /tmp/serverInfo.txt & then serverMgmt/ServerHandler.go will read.
 serverName=$1
