@@ -218,11 +218,12 @@ fi
 
 
 if [ $# -ne 3 ] ; then
+echo "agent hit test 221"
     echo "Insufficient arguments. Usage: $0 serverName projectId licenseKey"
     exit 1
 fi
 
-echo "agent hit"
+echo "agent hit 226"
 checkUserPrivileges
 # Read arguments, it will saved into /tmp/serverInfo.txt & then serverMgmt/ServerHandler.go will read.
 serverName=$1
@@ -250,7 +251,7 @@ removeProcessCmd=$removeProcessCmd
 EOL
 
 installAgent
-
+echo "agent hit 253"
 
 
 
