@@ -88,11 +88,11 @@ getFilePath(){
     fi
 
     if [[ $fileName == "infraGuardMain" ]]; then
-       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentController/infraGuardMain"
+       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentController/infraGuardMain --no-check-certificate"
     fi
 
     if [[ $fileName == "agentConstants.txt" ]]; then
-       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentConstants.txt"
+       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentConstants.txt --no-check-certificate"
     fi
 
 }
