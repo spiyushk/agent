@@ -104,11 +104,11 @@ installAgent() {
 
     getFilePath "$repoName" "$fileAgentController"
     echo "gitFullPath = : $gitFullPath"
-    echo "Downloading $fileAgentController "
+    echo "107.  Downloading $fileAgentController "
     #local url="wget -O /tmp/$fileAgentController https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/$fileAgentController"
-    local url="wget -qO- /tmp/$fileAgentController $gitFullPath --no-check-certificate "
+    local url="wget -O /tmp/$fileAgentController $gitFullPath --no-check-certificate "
     
-    echo "url = : $url"
+    echo "111. url = : $url"
     
     
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
