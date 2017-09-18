@@ -83,7 +83,7 @@ getFilePath(){
     if [[ $fileName == "agent_controller.sh"  ||
          $fileName == "agent_controller.service" ||
          $fileName == "agent_controller_ubuntu.sh" ]]; then
-       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/scripts/$fileName"
+       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/scripts/$fileName --no-check-certificate"
 
     fi
 
