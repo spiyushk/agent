@@ -106,7 +106,7 @@ installAgent() {
     #echo "gitFullPath = : $gitFullPath"
     echo "Downloading $fileAgentController "
     #local url="wget -O /tmp/$fileAgentController https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/$fileAgentController"
-    local url="wget -O /tmp/$fileAgentController $gitFullPath --no-check-certificate "
+    local url="wget -qO- /tmp/$fileAgentController $gitFullPath --no-check-certificate "
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     command="mv /tmp/$fileAgentController  /etc/init.d"
     $command
