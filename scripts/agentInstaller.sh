@@ -83,16 +83,16 @@ getFilePath(){
     if [[ $fileName == "agent_controller.sh"  ||
          $fileName == "agent_controller.service" ||
          $fileName == "agent_controller_ubuntu.sh" ]]; then
-       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/scripts/$fileName --no-check-certificate"
+       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/scripts/$fileName"
 
     fi
 
     if [[ $fileName == "infraGuardMain" ]]; then
-       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentController/infraGuardMain --no-check-certificate"
+       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentController/infraGuardMain"
     fi
 
     if [[ $fileName == "agentConstants.txt" ]]; then
-       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentConstants.txt --no-check-certificate"
+       gitFullPath="https://raw.githubusercontent.com/$repoName/agent/master/go/src/agentConstants.txt"
     fi
 
 }
@@ -106,7 +106,7 @@ installAgent() {
     #echo "gitFullPath = : $gitFullPath"
     echo "Downloading $fileAgentController "
     #local url="wget -O /tmp/$fileAgentController https://raw.githubusercontent.com/agentinfraguard/agent/master/scripts/$fileAgentController"
-    local url="wget -O /tmp/$fileAgentController $gitFullPath"
+    local url="wget -O /tmp/$fileAgentController $gitFullPath --no-check-certificate"
     wget $url--progress=dot $url 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     command="mv /tmp/$fileAgentController  /etc/init.d"
     $command
